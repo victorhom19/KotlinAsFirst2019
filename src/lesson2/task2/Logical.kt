@@ -3,7 +3,6 @@
 package lesson2.task2
 
 import lesson1.task1.sqr
-import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -13,7 +12,7 @@ import kotlin.math.sqrt
  * Лежит ли точка (x, y) внутри окружности с центром в (x0, y0) и радиусом r?
  */
 fun pointInsideCircle(x: Double, y: Double, x0: Double, y0: Double, r: Double) =
-    sqr(x - x0) + sqr(y - y0) <= sqr(r)
+	sqr(x - x0) + sqr(y - y0) <= sqr(r)
 
 /**
  * Простая
@@ -21,7 +20,8 @@ fun pointInsideCircle(x: Double, y: Double, x0: Double, y0: Double, r: Double) =
  * Четырехзначное число назовем счастливым, если сумма первых двух ее цифр равна сумме двух последних.
  * Определить, счастливое ли заданное число, вернуть true, если это так.
  */
-fun isNumberHappy(number: Int): Boolean = if (number/1000+number/100%10==number/10%10+number%10) true else (false)
+fun isNumberHappy(number: Int): Boolean =
+	if (number / 1000 + number / 100 % 10 == number / 10 % 10 + number % 10) true else (false)
 
 /**
  * Простая
@@ -31,12 +31,11 @@ fun isNumberHappy(number: Int): Boolean = if (number/1000+number/100%10==number/
  * Считать, что ферзи не могут загораживать друг друга.
  */
 fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean =
-    when {
-        ((x1 == x2) or (y1 == y2)) -> true
-        (((x1-x2).toDouble()/(y1-y2)==1.0) or ((x1-x2).toDouble()/(y1-y2)==-1.0)) -> true
-        else -> false
-    }
-
+	when {
+		((x1 == x2) or (y1 == y2)) -> true
+		(((x1 - x2).toDouble() / (y1 - y2) == 1.0) or ((x1 - x2).toDouble() / (y1 - y2) == -1.0)) -> true
+		else -> false
+	}
 
 
 /**
@@ -46,16 +45,16 @@ fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean =
  * Вернуть число дней в этом месяце этого года по григорианскому календарю.
  */
 fun daysInMonth(month: Int, year: Int): Int {
-    val months30 = listOf(4, 6, 9, 11) //список номеров месяцев, содержащих 30 дней
-    val months31 = listOf(1, 3, 5, 7, 8, 10, 12) //список номеров месяцев, содержащих 31 день
-    return when {
-        months30.contains(month) -> 30
-        months31.contains(month) -> 31
-        else -> {
-            if((year % 4 == 0) and ((year % 100 != 0) or (year % 400 == 0))) 29
-                else 28
-        }
-    }
+	val months30 = listOf(4, 6, 9, 11) //список номеров месяцев, содержащих 30 дней
+	val months31 = listOf(1, 3, 5, 7, 8, 10, 12) //список номеров месяцев, содержащих 31 день
+	return when {
+		months30.contains(month) -> 30
+		months31.contains(month) -> 31
+		else -> {
+			if ((year % 4 == 0) and ((year % 100 != 0) or (year % 400 == 0))) 29
+			else 28
+		}
+	}
 }
 
 /**
@@ -66,12 +65,12 @@ fun daysInMonth(month: Int, year: Int): Int {
  * Вернуть true, если утверждение верно
  */
 fun circleInside(
-    x1: Double, y1: Double, r1: Double,
-    x2: Double, y2: Double, r2: Double
+	x1: Double, y1: Double, r1: Double,
+	x2: Double, y2: Double, r2: Double
 ): Boolean =
-    ((sqrt((x2-x1).pow(2) + (y2 - y1).pow(2)) + r1) <= r2)
-    /*окружность 1 будет лежать внутри окружности 2, когда сумма расстояния между центрами этих окружностей и
-    радиуса 1ой окружности будет меньше или равна радиусу 2ой окружности*/
+	((sqrt((x2 - x1).pow(2) + (y2 - y1).pow(2)) + r1) <= r2)
+/*окружность 1 будет лежать внутри окружности 2, когда сумма расстояния между центрами этих окружностей и
+радиуса 1ой окружности будет меньше или равна радиусу 2ой окружности*/
 
 /**
  * Средняя
@@ -83,12 +82,12 @@ fun circleInside(
  * Вернуть true, если кирпич пройдёт
  */
 fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
-    /*кирпич будет проходить в отверстие, когда измерения каждой из его граней будут меньше или равны
-    измерениям прямоугольного отверстия*/
-    return when {
-        ((a <= r) and (b <= s)) or ((a <= s) and (b <= r)) -> true
-        ((a <= r) and (c <= s)) or ((a <= s) and (c <= r)) -> true
-        ((c <= r) and (b <= s)) or ((c <= s) and (b <= r)) -> true
-        else -> false
-    }
+	/*кирпич будет проходить в отверстие, когда измерения каждой из его граней будут меньше или равны
+	измерениям прямоугольного отверстия*/
+	return when {
+		((a <= r) and (b <= s)) or ((a <= s) and (b <= r)) -> true
+		((a <= r) and (c <= s)) or ((a <= s) and (c <= r)) -> true
+		((c <= r) and (b <= s)) or ((c <= s) and (b <= r)) -> true
+		else -> false
+	}
 }
