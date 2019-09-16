@@ -223,7 +223,24 @@ fun collatzSteps(x: Int): Int {
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
-fun sin(x: Double, eps: Double): Double = TODO()
+fun sin(x: Double, eps: Double): Double {
+	var numberPower = 1
+	val number = if ((x / PI) % 2 == 0.0) 0.0
+	else x % (2 * PI)
+	var result = 0.0
+	var newMember = eps
+	while (newMember >= eps) {
+		newMember = (number.pow(numberPower)) / factorial(numberPower)
+		if (numberPower % 4 == 1) {
+			result += newMember
+		} else {
+			result -= newMember
+		}
+
+		numberPower += 2
+	}
+	return (result)
+}
 
 /**
  * Средняя
@@ -234,7 +251,24 @@ fun sin(x: Double, eps: Double): Double = TODO()
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.cos и другие стандартные реализации функции косинуса в этой задаче запрещается.
  */
-fun cos(x: Double, eps: Double): Double = TODO()
+fun cos(x: Double, eps: Double): Double {
+	var numberPower = 0
+	val number = if ((x / PI) % 2 == 0.0) 0.0
+	else x % (2 * PI)
+	var result = 0.0
+	var newMember = eps
+	while (newMember >= eps) {
+		newMember = (number.pow(numberPower)) / factorial(numberPower)
+		if (numberPower % 4 == 2) {
+			result -= newMember
+		} else {
+			result += newMember
+		}
+
+		numberPower += 2
+	}
+	return (result)
+}
 
 /**
  * Средняя
@@ -382,4 +416,35 @@ fun squareSequenceDigit(n: Int): Int {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun fibSequenceDigit(n: Int): Int = TODO()
+fun fibSequenceDigit(n: Int): Int {
+	var counter = 0
+	var generator = 1
+	var generatedFib: Int
+	var fibLength: Int
+	var result = 0
+	while (counter != n) {
+		generatedFib = fib(generator)
+		fibLength = 0
+		while (generatedFib > 0) {
+			generatedFib /= 10
+			fibLength += 1
+		}
+		generatedFib = fib(generator)
+		if (counter + fibLength >= n) {
+			generatedFib = revert(generatedFib)
+			for (i in 1..fibLength) {
+				counter += 1
+				if (counter == n) {
+					result = generatedFib % 10
+					break
+				} else {
+					generatedFib /= 10
+				}
+			}
+		} else {
+			counter += fibLength
+		}
+		generator += 1
+	}
+	return (result)
+}
