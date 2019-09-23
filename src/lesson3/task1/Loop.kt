@@ -350,7 +350,7 @@ fun hasDifferentDigits(n: Int): Boolean {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun squareSequenceDigit(n: Int): Int {
-	var generatedSquare: Int
+	var generatedSquare = 0
 	var generator = 1
 	var strokeLength = 0
 	var result = 0
@@ -369,7 +369,6 @@ fun squareSequenceDigit(n: Int): Int {
 			generator += 1
 		}
 	}
-	print(" | ")
 	return result
 }
 
