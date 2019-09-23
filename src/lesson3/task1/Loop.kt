@@ -10,11 +10,11 @@ import kotlin.math.*
  * Вычисление факториала
  */
 fun factorial(n: Int): Double {
-	var result = 1.0
-	for (i in 1..n) {
-		result = result * i // Please do not fix in master
-	}
-	return result
+    var result = 1.0
+    for (i in 1..n) {
+        result = result * i // Please do not fix in master
+    }
+    return result
 }
 
 /**
@@ -23,13 +23,13 @@ fun factorial(n: Int): Double {
  * Проверка числа на простоту -- результат true, если число простое
  */
 fun isPrime(n: Int): Boolean {
-	if (n < 2) return false
-	if (n == 2) return true
-	if (n % 2 == 0) return false
-	for (m in 3..sqrt(n.toDouble()).toInt() step 2) {
-		if (n % m == 0) return false
-	}
-	return true
+    if (n < 2) return false
+    if (n == 2) return true
+    if (n % 2 == 0) return false
+    for (m in 3..sqrt(n.toDouble()).toInt() step 2) {
+        if (n % m == 0) return false
+    }
+    return true
 }
 
 /**
@@ -38,13 +38,13 @@ fun isPrime(n: Int): Boolean {
  * Проверка числа на совершенность -- результат true, если число совершенное
  */
 fun isPerfect(n: Int): Boolean {
-	var sum = 1
-	for (m in 2..n / 2) {
-		if (n % m > 0) continue
-		sum += m
-		if (sum > n) break
-	}
-	return sum == n
+    var sum = 1
+    for (m in 2..n / 2) {
+        if (n % m > 0) continue
+        sum += m
+        if (sum > n) break
+    }
+    return sum == n
 }
 
 /**
@@ -53,11 +53,11 @@ fun isPerfect(n: Int): Boolean {
  * Найти число вхождений цифры m в число n
  */
 fun digitCountInNumber(n: Int, m: Int): Int =
-	when {
-		n == m -> 1
-		n < 10 -> 0
-		else -> digitCountInNumber(n / 10, m) + digitCountInNumber(n % 10, m)
-	}
+    when {
+        n == m -> 1
+        n < 10 -> 0
+        else -> digitCountInNumber(n / 10, m) + digitCountInNumber(n % 10, m)
+    }
 
 /**
  * Простая
@@ -68,13 +68,13 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun digitNumber(n: Int): Int {
-	var digitCounter = 0
-	var digit = n
-	do {
-		digit /= 10
-		digitCounter += 1
-	} while (abs(digit) > 0)
-	return (digitCounter)
+    var digitCounter = 0
+    var digit = n
+    do {
+        digit /= 10
+        digitCounter += 1
+    } while (abs(digit) > 0)
+    return (digitCounter)
 }
 
 /**
@@ -84,22 +84,22 @@ fun digitNumber(n: Int): Int {
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
 fun fib(n: Int): Int {
-	/*Был вариант сделать рекурсией, но это занимает слишком много ресурсов компьютера.
-	Так итоговое время теста составило 59 секунд.
-	Код:
-	fun fib(n: Int): Int = return if (n == 1 || n == 2) 1 else fib(n - 1) + fib(n - 2)*/
-	var previousNumber = 1
-	var presentNumber = 1
-	var t: Int
-	return if (n == 1 || n == 2) 1
-	else {
-		for (i in 3..n) {
-			t = presentNumber
-			presentNumber += previousNumber
-			previousNumber = t
-		}
-		return (presentNumber)
-	}
+    /*Был вариант сделать рекурсией, но это занимает слишком много ресурсов компьютера.
+    Так итоговое время теста составило 59 секунд.
+    Код:
+    fun fib(n: Int): Int = return if (n == 1 || n == 2) 1 else fib(n - 1) + fib(n - 2)*/
+    var previousNumber = 1
+    var presentNumber = 1
+    var t: Int
+    return if (n == 1 || n == 2) 1
+    else {
+        for (i in 3..n) {
+            t = presentNumber
+            presentNumber += previousNumber
+            previousNumber = t
+        }
+        return (presentNumber)
+    }
 }
 
 
@@ -110,24 +110,24 @@ fun fib(n: Int): Int {
  * минимальное число k, которое делится и на m и на n без остатка
  */
 fun lcm(m: Int, n: Int): Int {
-	/*Находим НОК, используя алгоритм Евклида:*/
-	var numberA = max(m, n)
-	var numberB = min(m, n)
-	var gcd = 1
-	var temp = 1
-	return when {
-		numberA % numberB == 0 -> numberA //случай, когда числа равны
-		numberA == 1 || numberB == 1 -> m * n //случай, когда одно из чисел - единица
-		else -> {
-			while (temp != 0) {
-				gcd = temp
-				temp = numberA % numberB
-				numberA = numberB
-				numberB = temp
-			}
-			(m / gcd * n)
-		}
-	}
+    /*Находим НОД, используя алгоритм Евклида:*/
+    var numberA = max(m, n)
+    var numberB = min(m, n)
+    var gcd = 1
+    var temp = 1
+    return when {
+        numberA % numberB == 0 -> numberA //случай, когда числа равны или большее число кратно меньшему
+        numberA == 1 || numberB == 1 -> m * n //случай, когда одно из чисел или оба числа единицы
+        else -> {
+            while (temp != 0) {
+                gcd = temp
+                temp = numberA % numberB
+                numberA = numberB
+                numberB = temp
+            }
+            (m / gcd * n)
+        }
+    }
 }
 
 /**
@@ -136,17 +136,14 @@ fun lcm(m: Int, n: Int): Int {
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
 fun minDivisor(n: Int): Int {
-	var result = 0
-	return if (n % 2 == 0) 2
-	else {
-		for (i in 3..n step 2) {
-			if (n % i == 0) {
-				result = i
-				break
-			}
-		}
-		return (result)
-	}
+    var result = n
+    for (i in 2..sqrt(n.toDouble()).toInt()) {
+        if (n % i == 0) {
+            result = i
+            break
+        }
+    }
+    return (result)
 }
 
 /**
@@ -154,15 +151,7 @@ fun minDivisor(n: Int): Int {
  *
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
-fun maxDivisor(n: Int): Int {
-	var result = 0
-	for (i in 1 until (n - 1)) {
-		if (n % i == 0) {
-			result = i
-		}
-	}
-	return (result)
-}
+fun maxDivisor(n: Int): Int = if (minDivisor(n) == 1) 1 else n / minDivisor(n)
 
 /**
  * Простая
@@ -172,11 +161,24 @@ fun maxDivisor(n: Int): Int {
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
 fun isCoPrime(m: Int, n: Int): Boolean {
-	var result = true
-	for (i in 2..max(m, n)) {
-		if ((m % i == 0) and (n % i == 0)) result = false
-	}
-	return (result)
+    /*Находим НОД, используя алгоритм Евклида:*/
+    var numberA = max(m, n)
+    var numberB = min(m, n)
+    var gcd = 1
+    var temp = 1
+    when {
+        numberA % numberB == 0 -> gcd = numberB //случай, когда числа равны или большее число кратно меньшему
+        else -> {
+            while (temp != 0) {
+                gcd = temp
+                temp = numberA % numberB
+                numberA = numberB
+                numberB = temp
+            }
+        }
+    }
+    /*Числа будут взаимно простыми, если их наибольший общий делитель равен единице*/
+    return gcd == 1
 }
 
 /**
@@ -186,13 +188,7 @@ fun isCoPrime(m: Int, n: Int): Boolean {
  * то есть, существует ли такое целое k, что m <= k*k <= n.
  * Например, для интервала 21..28 21 <= 5*5 <= 28, а для интервала 51..61 квадрата не существует.
  */
-fun squareBetweenExists(m: Int, n: Int): Boolean {
-	return when {
-		(sqrt(n.toDouble()).toInt() != sqrt(m.toDouble()).toInt()) -> true
-		(sqrt(n.toDouble()) % 1 == 0.0) or (sqrt(m.toDouble()) % 1 == 0.0) -> true
-		else -> false
-	}
-}
+fun squareBetweenExists(m: Int, n: Int): Boolean = sqrt(n.toDouble()) >= ceil(sqrt(m.toDouble()))
 
 /**
  * Средняя
@@ -211,18 +207,18 @@ fun squareBetweenExists(m: Int, n: Int): Boolean {
  * этого для какого-либо начального X > 0.
  */
 fun collatzSteps(x: Int): Int {
-	var counter = 0
-	var number = x
-	while (number != 1) {
-		if (number % 2 == 0) {
-			number /= 2
-			counter += 1
-		} else {
-			number = 3 * number + 1
-			counter += 1
-		}
-	}
-	return (counter)
+    var counter = 0
+    var number = x
+    while (number != 1) {
+        if (number % 2 == 0) {
+            number /= 2
+            counter += 1
+        } else {
+            number = 3 * number + 1
+            counter += 1
+        }
+    }
+    return (counter)
 }
 
 /**
@@ -235,26 +231,26 @@ fun collatzSteps(x: Int): Int {
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
 fun sin(x: Double, eps: Double): Double {
-	var numberPower = 1
-	var number = x
-	while (number >= 2.0 * PI) {
-		number -= 2.0 * PI
-	}
-	while (number <= 2.0 * PI) {
-		number += 2.0 * PI
-	}
-	var result = 0.0
-	var newMember = eps
-	while (newMember >= eps) {
-		newMember = (number.pow(numberPower)) / factorial(numberPower)
-		if (numberPower % 4 == 1) {
-			result += newMember
-		} else {
-			result -= newMember
-		}
-		numberPower += 2
-	}
-	return (result)
+    var numberPower = 1
+    var number = x
+    while (number >= 2.0 * PI) {
+        number -= 2.0 * PI
+    }
+    while (number <= -2.0 * PI) {
+        number += 2.0 * PI
+    }
+    var result = 0.0
+    var newMember = eps
+    while (abs(newMember) >= eps) {
+        newMember = (number.pow(numberPower)) / factorial(numberPower)
+        if (numberPower % 4 == 1) {
+            result += newMember
+        } else {
+            result -= newMember
+        }
+        numberPower += 2
+    }
+    return (result)
 }
 
 /**
@@ -267,26 +263,26 @@ fun sin(x: Double, eps: Double): Double {
  * Использовать kotlin.math.cos и другие стандартные реализации функции косинуса в этой задаче запрещается.
  */
 fun cos(x: Double, eps: Double): Double {
-	var numberPower = 0
-	var number = x
-	while (number >= 2 * PI) {
-		number -= 2 * PI
-	}
-	while (number <= 2 * PI) {
-		number += 2 * PI
-	}
-	var result = 0.0
-	var newMember = eps
-	while (newMember >= eps) {
-		newMember = (number.pow(numberPower)) / factorial(numberPower)
-		if (numberPower % 4 == 0) {
-			result += newMember
-		} else {
-			result -= newMember
-		}
-		numberPower += 2
-	}
-	return (result)
+    var numberPower = 0
+    var number = x
+    while (number >= 2 * PI) {
+        number -= 2 * PI
+    }
+    while (number <= 2 * PI) {
+        number += 2 * PI
+    }
+    var result = 0.0
+    var newMember = eps
+    while (newMember >= eps) {
+        newMember = (number.pow(numberPower)) / factorial(numberPower)
+        if (numberPower % 4 == 0) {
+            result += newMember
+        } else {
+            result -= newMember
+        }
+        numberPower += 2
+    }
+    return (result)
 }
 
 /**
@@ -297,13 +293,13 @@ fun cos(x: Double, eps: Double): Double {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun revert(n: Int): Int {
-	var number = n
-	var result = 0
-	for (i in 1..digitNumber(number)) {
-		result = result * 10 + number % 10
-		number /= 10
-	}
-	return (result)
+    var number = n
+    var result = 0
+    for (i in 1..digitNumber(number)) {
+        result = result * 10 + number % 10
+        number /= 10
+    }
+    return (result)
 }
 
 /**
@@ -326,18 +322,18 @@ fun isPalindrome(n: Int): Boolean = n == revert(n)
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun hasDifferentDigits(n: Int): Boolean {
-	var number = n
-	val keyDigit: Int
-	var result = false
-	keyDigit = number % 10
-	number /= 10
-	for (i in 1..digitNumber(number)) {
-		if (number % 10 != keyDigit) {
-			result = true
-		}
-		number /= 10
-	}
-	return (result)
+    var number = n
+    val keyDigit: Int
+    var result = false
+    keyDigit = number % 10
+    number /= 10
+    for (i in 1..digitNumber(number)) {
+        if (number % 10 != keyDigit) {
+            result = true
+        }
+        number /= 10
+    }
+    return (result)
 }
 
 /**
@@ -350,27 +346,24 @@ fun hasDifferentDigits(n: Int): Boolean {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun squareSequenceDigit(n: Int): Int {
-	var generatedSquare = 0
-	var generator = 1
-	var strokeLength = 0
-	var result = 0
-	while (true) {
-		generatedSquare = generator * generator
-		if (strokeLength + digitNumber(generatedSquare) >= n) {
-			generatedSquare = revert(generatedSquare)
-			while (strokeLength != n) {
-				result = generatedSquare % 10
-				generatedSquare /= 10
-				strokeLength += 1
-			}
-			break
-		} else {
-			strokeLength += digitNumber(generatedSquare)
-			generator += 1
-		}
-	}
-	return result
+    var generatedSquare: Int
+    var generator = 1
+    var strokeLength = 0
+    val result: Double
+    while (true) {
+        generatedSquare = generator * generator
+        if (strokeLength + digitNumber(generatedSquare) >= n) {
+            /*Использование Double из-за необходимости использования pow*/
+            result = generatedSquare / 10.0.pow(digitNumber(generatedSquare) + strokeLength - n) % 10
+            break
+        } else {
+            strokeLength += digitNumber(generatedSquare)
+            generator += 1
+        }
+    }
+    return result.toInt()
 }
+
 
 /**
  * Сложная
@@ -382,34 +375,20 @@ fun squareSequenceDigit(n: Int): Int {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun fibSequenceDigit(n: Int): Int {
-	var counter = 0
-	var generator = 1
-	var generatedFib: Int
-	var fibLength: Int
-	var result = 0
-	while (counter != n) {
-		generatedFib = fib(generator)
-		fibLength = 0
-		while (generatedFib > 0) {
-			generatedFib /= 10
-			fibLength += 1
-		}
-		generatedFib = fib(generator)
-		if (counter + fibLength >= n) {
-			generatedFib = revert(generatedFib)
-			for (i in 1..fibLength) {
-				counter += 1
-				if (counter == n) {
-					result = generatedFib % 10
-					break
-				} else {
-					generatedFib /= 10
-				}
-			}
-		} else {
-			counter += fibLength
-		}
-		generator += 1
-	}
-	return (result)
+    var generatedFib: Int
+    var generator = 1
+    var strokeLength = 0
+    val result: Double
+    while (true) {
+        generatedFib = fib(generator)
+        if (strokeLength + digitNumber(generatedFib) >= n) {
+            /*Переход к Double из-за необходимости использования pow*/
+            result = generatedFib / 10.0.pow(digitNumber(generatedFib) + strokeLength - n) % 10
+            break
+        } else {
+            strokeLength += digitNumber(generatedFib)
+            generator += 1
+        }
+    }
+    return result.toInt()
 }
