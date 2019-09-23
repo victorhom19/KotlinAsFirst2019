@@ -182,6 +182,7 @@ class Tests {
         assertEquals(0.0, sin(100 * PI, 1e-5), 1e-5)
         assertNotEquals(kotlin.math.sin(1.0), sin(1.0, 1.0))
         assertNotEquals(kotlin.math.sin(-0.5), sin(-0.5, 1.0))
+        assertEquals(0.017452406459518247, sin(-18.832102629018816, 1e-10))
     }
 
     @Test
@@ -236,6 +237,7 @@ class Tests {
         assertEquals(6, squareSequenceDigit(12))
         assertEquals(0, squareSequenceDigit(17))
         assertEquals(9, squareSequenceDigit(27))
+        assertEquals(1, squareSequenceDigit(334471))
     }
 
     @Test
