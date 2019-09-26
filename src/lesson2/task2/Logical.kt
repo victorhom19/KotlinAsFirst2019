@@ -31,9 +31,8 @@ fun isNumberHappy(number: Int): Boolean = number / 1000 + number / 100 % 10 == n
  * Определить, угрожают ли они друг другу. Вернуть true, если угрожают.
  * Считать, что ферзи не могут загораживать друг друга.
  */
-fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean {
-    return(abs(x1 - x2) == abs(y1 - y2) || x1 == x2 || y1 == y2)
-}
+fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean =
+    abs(x1 - x2) == abs(y1 - y2) || x1 == x2 || y1 == y2
 
 /**
  * Простая
@@ -41,8 +40,8 @@ fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean {
  * Дан номер месяца (от 1 до 12 включительно) и год (положительный).
  * Вернуть число дней в этом месяце этого года по григорианскому календарю.
  */
-fun daysInMonth(month: Int, year: Int): Int {
-    return when {
+fun daysInMonth(month: Int, year: Int): Int =
+    when {
         months30.contains(month) -> 30
         months31.contains(month) -> 31
         else -> {
@@ -50,7 +49,6 @@ fun daysInMonth(month: Int, year: Int): Int {
             else 28
         }
     }
-}
 
 /**
  * Средняя
@@ -63,8 +61,6 @@ fun circleInside(
     x1: Double, y1: Double, r1: Double,
     x2: Double, y2: Double, r2: Double
 ): Boolean = sqrt((x2 - x1).pow(2) + (y2 - y1).pow(2)) + r1 <= r2
-/*окружность 1 будет лежать внутри окружности 2, когда сумма расстояния между центрами этих окружностей и
-радиуса 1ой окружности будет меньше или равна радиусу 2ой окружности*/
 
 /**
  * Средняя
@@ -76,10 +72,10 @@ fun circleInside(
  * Вернуть true, если кирпич пройдёт
  */
 fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
-    val maxSide = max(c, max(a, b))
-    val minSide = min(c, min(a, b))
+    val maxSide = maxOf(a, b, c)
+    val minSide = minOf(a, b, c)
     val medSide = a + b + c - maxSide - minSide
     /*кирпич будет проходить в отверстие, когда его меньшая грань будет меньше или равна
     площади прямоугольного отверстия*/
-    return medSide <= max(r,s) && minSide <= min(r,s)
+    return medSide <= max(r, s) && minSide <= min(r, s)
 }

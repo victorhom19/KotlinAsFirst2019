@@ -69,12 +69,12 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  */
 fun digitNumber(n: Int): Int {
     var digitCounter = 0
-    var digit = n
+    var digits = abs(n)
     do {
-        digit /= 10
+        digits /= 10
         digitCounter += 1
-    } while (abs(digit) > 0)
-    return (digitCounter)
+    } while (digits > 0)
+    return digitCounter
 }
 
 /**
@@ -91,15 +91,13 @@ fun fib(n: Int): Int {
     var previousNumber = 1
     var presentNumber = 1
     var t: Int
-    return if (n == 1 || n == 2) 1
-    else {
-        for (i in 3..n) {
-            t = presentNumber
-            presentNumber += previousNumber
-            previousNumber = t
-        }
-        return (presentNumber)
+    if (n == 1 || n == 2) return 1
+    for (i in 3..n) {
+        t = presentNumber
+        presentNumber += previousNumber
+        previousNumber = t
     }
+    return (presentNumber)
 }
 
 
@@ -113,21 +111,15 @@ fun lcm(m: Int, n: Int): Int {
     /*Находим НОД, используя алгоритм Евклида:*/
     var numberA = max(m, n)
     var numberB = min(m, n)
-    var gcd = 1
-    var temp = 1
-    return when {
-        numberA % numberB == 0 -> numberA //случай, когда числа равны или большее число кратно меньшему
-        numberA == 1 || numberB == 1 -> m * n //случай, когда одно из чисел или оба числа единицы
-        else -> {
-            while (temp != 0) {
-                gcd = temp
-                temp = numberA % numberB
-                numberA = numberB
-                numberB = temp
-            }
-            (m / gcd * n)
-        }
+    var gcd = numberB
+    var temp = numberA % numberB
+    while (temp != 0) {
+        gcd = temp
+        temp = numberA % numberB
+        numberA = numberB
+        numberB = temp
     }
+    return (m / gcd * n)
 }
 
 /**
@@ -151,7 +143,7 @@ fun minDivisor(n: Int): Int {
  *
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
-fun maxDivisor(n: Int): Int = if (minDivisor(n) == 1) 1 else n / minDivisor(n)
+fun maxDivisor(n: Int): Int = n / minDivisor(n)
 
 /**
  * Простая
@@ -160,26 +152,7 @@ fun maxDivisor(n: Int): Int = if (minDivisor(n) == 1) 1 else n / minDivisor(n)
  * Взаимно простые числа не имеют общих делителей, кроме 1.
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
-fun isCoPrime(m: Int, n: Int): Boolean {
-    /*Находим НОД, используя алгоритм Евклида:*/
-    var numberA = max(m, n)
-    var numberB = min(m, n)
-    var gcd = 1
-    var temp = 1
-    when {
-        numberA % numberB == 0 -> gcd = numberB //случай, когда числа равны или большее число кратно меньшему
-        else -> {
-            while (temp != 0) {
-                gcd = temp
-                temp = numberA % numberB
-                numberA = numberB
-                numberB = temp
-            }
-        }
-    }
-    /*Числа будут взаимно простыми, если их наибольший общий делитель равен единице*/
-    return gcd == 1
-}
+fun isCoPrime(m: Int, n: Int): Boolean = lcm(m, n) == m * n
 
 /**
  * Простая
@@ -218,7 +191,7 @@ fun collatzSteps(x: Int): Int {
             counter += 1
         }
     }
-    return (counter)
+    return counter
 }
 
 /**
@@ -240,15 +213,17 @@ fun sin(x: Double, eps: Double): Double {
         number += 2.0 * PI
     }
     var result = 0.0
-    var newMember = eps
-    while (abs(newMember) >= eps) {
+    var newMember: Double
+    while (true) {
         newMember = (number.pow(numberPower)) / factorial(numberPower)
+        if (abs(newMember) < eps) break
         if (numberPower % 4 == 1) {
             result += newMember
         } else {
             result -= newMember
         }
         numberPower += 2
+        print("$newMember ")
     }
     return (result)
 }
@@ -272,9 +247,10 @@ fun cos(x: Double, eps: Double): Double {
         number += 2 * PI
     }
     var result = 0.0
-    var newMember = eps
-    while (newMember >= eps) {
+    var newMember: Double
+    while (true) {
         newMember = (number.pow(numberPower)) / factorial(numberPower)
+        if (newMember < eps) break
         if (numberPower % 4 == 0) {
             result += newMember
         } else {
@@ -323,17 +299,11 @@ fun isPalindrome(n: Int): Boolean = n == revert(n)
  */
 fun hasDifferentDigits(n: Int): Boolean {
     var number = n
-    val keyDigit: Int
-    var result = false
-    keyDigit = number % 10
-    number /= 10
-    for (i in 1..digitNumber(number)) {
-        if (number % 10 != keyDigit) {
-            result = true
-        }
+    while (number >= 10) {
+        if (number % 10 != number / 10 % 10) return true
         number /= 10
     }
-    return (result)
+    return false
 }
 
 /**

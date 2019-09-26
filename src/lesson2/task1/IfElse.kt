@@ -153,8 +153,8 @@ fun rookOrBishopThreatens(
  * Если такой треугольник не существует, вернуть -1.
  */
 fun triangleKind(a: Double, b: Double, c: Double): Int {
-    val maxSide = max(c, max(a, b))
-    val minSide = min(c, min(a, b))
+    val maxSide = maxOf(a, b, c)
+    val minSide = minOf(a, b, c)
     val medSide = a + b + c - maxSide - minSide
     return when {
         maxSide >= minSide + medSide -> -1
@@ -177,9 +177,6 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
  * Если пересечения нет, вернуть -1.
  */
 fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
-    return when {
-        c in a..b -> if (d in a..b) d - c else b - c
-        a in c..d -> if (b in c..d) b - a else d - a
-        else -> -1
-    }
+    val result = min(b, d) - max(a, c)
+    return if (result >= 0) result else -1
 }
