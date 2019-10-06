@@ -2,6 +2,7 @@
 
 package lesson5.task1
 
+
 /**
  * Пример
  *
@@ -91,7 +92,22 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  *   buildGrades(mapOf("Марат" to 3, "Семён" to 5, "Михаил" to 5))
  *     -> mapOf(5 to listOf("Семён", "Михаил"), 3 to listOf("Марат"))
  */
-fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> = TODO()
+fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
+    val result = mutableMapOf<Int, List<String>>()
+    var gradesList = mutableListOf<String>()
+    for (mark in 2..5) {
+        for (element in grades){
+            if (element.value == mark) {
+                gradesList.add(element.key)
+            }
+        }
+        if (gradesList.isNotEmpty()) {
+            result[mark] = gradesList
+            gradesList = mutableListOf()
+        }
+    }
+    return(result)
+}
 
 /**
  * Простая
