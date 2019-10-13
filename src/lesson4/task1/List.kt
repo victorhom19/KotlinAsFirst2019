@@ -3,8 +3,16 @@
 package lesson4.task1
 
 import lesson1.task1.discriminant
+import lesson3.task1.lcm
+import lesson3.task1.minDivisor
 import kotlin.math.pow
 import kotlin.math.sqrt
+
+val alphabet = listOf(
+    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'g', 'k', 'l', 'm', 'n', 'o', 'p',
+    'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
+)
 
 /**
  * Пример
@@ -160,7 +168,6 @@ fun times(a: List<Int>, b: List<Int>): Int {
     if (a.isEmpty()) return 0
     var result = 0
     for (i in a.indices) {
-        print("$i ")
         result += a[i] * b[i]
     }
     return result
@@ -194,11 +201,12 @@ fun polynom(p: List<Int>, x: Int): Int {
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun accumulate(list: MutableList<Int>): MutableList<Int> {
-    if (list.isEmpty()) return list
-    var sum = 0
-    for (i in list.indices) {
-        sum += list[i]
-        list[i] = sum
+    if (list.isNotEmpty()) {
+        var sum = 0
+        for (i in list.indices) {
+            sum += list[i]
+            list[i] = sum
+        }
     }
     return list
 }
@@ -211,17 +219,21 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> {
  * Множители в списке должны располагаться по возрастанию.
  */
 fun factorize(n: Int): List<Int> {
-    var number = n
-    var counter = 1
     val simpleMultipliers = mutableListOf<Int>()
+    var number = n
     while (number > 1) {
-        counter++
+        simpleMultipliers.add(minDivisor(number))
+        number /= minDivisor(number)
+    }
+    /*var counter = 1
+    while (number > 1) {
+        counter ++
         if (number % counter == 0) {
-            number /= counter
             simpleMultipliers.add(counter)
+            number /= counter
             counter = 1
         }
-    }
+    }*/
     return simpleMultipliers
 }
 
@@ -232,16 +244,7 @@ fun factorize(n: Int): List<Int> {
  * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
  * Множители в результирующей строке должны располагаться по возрастанию.
  */
-fun factorizeToString(n: Int): String {
-    var stroke = ""
-    val simpleMultipliers = factorize(n)
-    for (i in simpleMultipliers.indices) {
-        stroke += simpleMultipliers[i].toString()
-        if (i == simpleMultipliers.size - 1) break
-        stroke += "*"
-    }
-    return stroke
-}
+fun factorizeToString(n: Int): String = factorize(n).joinToString(separator = "*")
 
 /**
  * Средняя
@@ -274,11 +277,6 @@ fun convert(n: Int, base: Int): List<Int> {
  */
 fun convertToString(n: Int, base: Int): String {
     var stroke = ""
-    val alphabet = listOf(
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'g', 'k', 'l', 'm', 'n', 'o', 'p',
-        'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
-    )
     for (digit in convert(n, base)) {
         stroke += alphabet[digit]
     }
@@ -313,11 +311,6 @@ fun decimal(digits: List<Int>, base: Int): Int {
  * (например, str.toInt(base)), запрещается.
  */
 fun decimalFromString(str: String, base: Int): Int {
-    val alphabet = listOf(
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'g', 'k', 'l', 'm', 'n', 'o', 'p',
-        'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
-    )
     var result = 0
     for (char in str) {
         result = result * base + alphabet.indexOf(char)
@@ -336,27 +329,21 @@ fun decimalFromString(str: String, base: Int): Int {
 fun roman(n: Int): String {
     var number = n
     var stroke = ""
-    var key = 4
-    val alphabet = listOf('I', 'V', 'X', 'L', 'C', 'D', 'M')
-    val alphabetValues = listOf<Int>(1, 5, 10, 50, 100, 500, 1000)
-    for (i in alphabet.size - 1 downTo 1) {
-        if (i == key) key -= 2
-        while (number >= alphabetValues[i]) {
-            stroke += alphabet[i]
-            number -= alphabetValues[i]
+    val keyAlphabet = listOf('C', 'C', 'X', 'X', 'I', 'I', 'I')
+    val keyAlphabetValues = listOf(100, 100, 10, 10, 1, 1, 1)
+    val rAlphabet = listOf('M', 'D', 'C', 'L', 'X', 'V', 'I')
+    val rAlphabetValues = listOf<Int>(1000, 500, 100, 50, 10, 5, 1)
+    for (i in rAlphabet.indices) {
+        while (number >= rAlphabetValues[i]) {
+            stroke += rAlphabet[i]
+            number -= rAlphabetValues[i]
         }
-        if (number >= alphabetValues[i] - alphabetValues[key]) {
-            stroke += alphabet[key]
-            stroke += alphabet[i]
-            number += alphabetValues[key]
-            number -= alphabetValues[i]
+        if ((number > 1) && (number >= rAlphabetValues[i] - keyAlphabetValues[i])) {
+            stroke = stroke + keyAlphabet[i] + rAlphabet[i]
+            number = number + keyAlphabetValues[i] - rAlphabetValues[i]
         }
     }
-    while (number >= 1) {
-        stroke += 'I'
-        number--
-    }
-    return stroke
+    return(stroke)
 }
 
 /**
