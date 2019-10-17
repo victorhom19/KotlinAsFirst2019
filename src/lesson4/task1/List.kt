@@ -3,7 +3,6 @@
 package lesson4.task1
 
 import lesson1.task1.discriminant
-import lesson3.task1.lcm
 import lesson3.task1.minDivisor
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -225,15 +224,6 @@ fun factorize(n: Int): List<Int> {
         simpleMultipliers.add(minDivisor(number))
         number /= minDivisor(number)
     }
-    /*var counter = 1
-    while (number > 1) {
-        counter ++
-        if (number % counter == 0) {
-            simpleMultipliers.add(counter)
-            number /= counter
-            counter = 1
-        }
-    }*/
     return simpleMultipliers
 }
 
@@ -332,7 +322,7 @@ fun roman(n: Int): String {
     val keyAlphabet = listOf('C', 'C', 'X', 'X', 'I', 'I', 'I')
     val keyAlphabetValues = listOf(100, 100, 10, 10, 1, 1, 1)
     val rAlphabet = listOf('M', 'D', 'C', 'L', 'X', 'V', 'I')
-    val rAlphabetValues = listOf<Int>(1000, 500, 100, 50, 10, 5, 1)
+    val rAlphabetValues = listOf(1000, 500, 100, 50, 10, 5, 1)
     for (i in rAlphabet.indices) {
         while (number >= rAlphabetValues[i]) {
             stroke += rAlphabet[i]
@@ -343,7 +333,7 @@ fun roman(n: Int): String {
             number = number + keyAlphabetValues[i] - rAlphabetValues[i]
         }
     }
-    return(stroke)
+    return (stroke)
 }
 
 /**

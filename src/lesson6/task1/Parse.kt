@@ -2,6 +2,9 @@
 
 package lesson6.task1
 
+import lesson2.task2.daysInMonth
+import java.lang.Exception
+
 /**
  * Пример
  *
@@ -58,6 +61,15 @@ fun main() {
 }
 
 
+fun illegalSymbols(stroke: String, Alphabet: String): Boolean {
+    /*Функция определяет, есть ли "некорректные" символы в строке stroke,
+    т.е. такие, которые отличатся от допустимого алфавита Alphabet*/
+    for (char in stroke) {
+        if (char !in Alphabet) return true
+    }
+    return false
+}
+
 /**
  * Средняя
  *
@@ -69,7 +81,35 @@ fun main() {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30.02.2009) считается неверными
  * входными данными.
  */
-fun dateStrToDigit(str: String): String = TODO()
+fun dateStrToDigit(str: String): String {
+    try {
+        val day = str.split(" ")[0].toInt()
+        val month = when (str.split(" ")[1]) {
+            "января" -> 1
+            "февраля" -> 2
+            "марта" -> 3
+            "апреля" -> 4
+            "мая" -> 5
+            "июня" -> 6
+            "июля" -> 7
+            "августа" -> 8
+            "сентября" -> 9
+            "октября" -> 10
+            "ноября" -> 11
+            "декабря" -> 12
+            else -> -1
+        }
+        val year = str.split(" ")[2].toInt()
+        return if (
+            day > 1 && day < daysInMonth(month, year) &&
+            year > 0 &&
+            month > 0
+        ) "${twoDigitStr(day)}.${twoDigitStr(month)}.${year}"
+        else ""
+    } catch (e: Exception) {
+        return ""
+    }
+}
 
 /**
  * Средняя
@@ -81,7 +121,36 @@ fun dateStrToDigit(str: String): String = TODO()
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30 февраля 2009) считается неверными
  * входными данными.
  */
-fun dateDigitToStr(digital: String): String = TODO()
+fun dateDigitToStr(digital: String): String {
+    try {
+        val day = digital.split(".")[0].toInt()
+        val month = when (digital.split(".")[1].toInt()) {
+            1 -> "января"
+            2 -> "февраля"
+            3 -> "марта"
+            4 -> "апреля"
+            5 -> "мая"
+            6 -> "июня"
+            7 -> "июля"
+            8 -> "августа"
+            9 -> "сентября"
+            10 -> "октября"
+            11 -> "ноября"
+            12 -> "декабря"
+            else -> "invalid"
+        }
+        val year = digital.split(".")[2].toInt()
+        return if (
+            digital.split(".").size == 3 &&
+            day > 0 && day < daysInMonth(digital.split(".")[1].toInt(), year) &&
+            year > 0 &&
+            month != "invalid"
+        ) "$day $month $year"
+        else ""
+    } catch (e: Exception) {
+        return ""
+    }
+}
 
 /**
  * Средняя
@@ -97,7 +166,26 @@ fun dateDigitToStr(digital: String): String = TODO()
  *
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
-fun flattenPhoneNumber(phone: String): String = TODO()
+fun flattenPhoneNumber(phone: String): String {
+    val notRepeatable = mutableMapOf('+' to 0, '(' to 0, ')' to 0)
+    val newPhone = phone.filter { it != ' ' && it != '-' }
+    if (illegalSymbols(newPhone, "0123456789+()")) return ""
+    for (char in newPhone) {
+        when {
+            //Проверка на повторяющиеся знаки + ( )
+            char in listOf('+', '(', ')') -> {
+                if (notRepeatable[char]!! == 1) return ""
+                notRepeatable[char] = 1
+            }
+            //Проверка на неверное расположение открывающей и закрывающей скобки
+            newPhone.indexOf(')') < phone.indexOf('(') -> return ""
+            //Проверка на неверное расположение знака +
+            '+' in newPhone && newPhone.indexOf('+') != 0 -> return ""
+            newPhone.indexOf('(') == phone.indexOf(')') - 2 -> return ""
+        }
+    }
+    return (newPhone.filter { it != '(' && it != ')' })
+}
 
 /**
  * Средняя
@@ -109,7 +197,19 @@ fun flattenPhoneNumber(phone: String): String = TODO()
  * Прочитать строку и вернуть максимальное присутствующее в ней число (717 в примере).
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
-fun bestLongJump(jumps: String): Int = TODO()
+fun bestLongJump(jumps: String): Int {
+    try {
+        val newJumps = jumps.split(' ')
+        var maxJump = -1
+        if (illegalSymbols(jumps, "0123456789-% ")) return -1
+        for (char in newJumps) {
+            if ((char !in "-%") && (char.toInt() > maxJump)) maxJump = char.toInt()
+        }
+        return maxJump
+    } catch (e: Exception) {
+        return -1
+    }
+}
 
 /**
  * Сложная
@@ -122,7 +222,27 @@ fun bestLongJump(jumps: String): Int = TODO()
  * При нарушении формата входной строки, а также в случае отсутствия удачных попыток,
  * вернуть -1.
  */
-fun bestHighJump(jumps: String): Int = TODO()
+fun bestHighJump(jumps: String): Int {
+    var newJumps = ""
+    var counter = 0
+    var maxJump = -1
+    for (char in jumps) {
+        when (char) {
+            in "0123456789+%-" -> newJumps += char
+            ' ' -> {
+                newJumps += if (counter % 2 == 0) char
+                else '/'
+                counter++
+            }
+            else -> return -1
+        }
+    }
+    for (element in newJumps.split('/')) {
+        val attempt = element.split(' ')
+        if (attempt[0].toInt() > maxJump && '+' in attempt[1]) maxJump = attempt[0].toInt()
+    }
+    return maxJump
+}
 
 /**
  * Сложная
@@ -133,7 +253,38 @@ fun bestHighJump(jumps: String): Int = TODO()
  * Вернуть значение выражения (6 для примера).
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
-fun plusMinus(expression: String): Int = TODO()
+fun plusMinus(expression: String): Int {
+    if (illegalSymbols(expression, "0123456789-+ ")) throw (IllegalArgumentException())
+    for (element in expression.split(' ')) {
+        var hasChar = false
+        var hasNumber = false
+        //Исключение расположения и символа и числа как единого слагаемого
+        for (char in element) {
+            if (char in "+-") {
+                hasChar = true
+            }
+            if (char in "0123456789") {
+                hasNumber = true
+            }
+            if (hasChar && hasNumber) throw (IllegalArgumentException())
+        }
+        if (element in "+-") {
+            if (expression.split(' ').indexOf(element) % 2 != 1) throw (IllegalArgumentException())
+        } else {
+            if (expression.split(' ').indexOf(element) % 2 != 0) throw (IllegalArgumentException())
+        }
+    }
+    var result = 0
+    var multiplier = 1
+    for (element in expression.split(' ')) {
+        when (element) {
+            "+" -> multiplier = 1
+            "-" -> multiplier = -1
+            else -> result += multiplier * element.toInt()
+        }
+    }
+    return result
+}
 
 /**
  * Сложная
@@ -144,7 +295,22 @@ fun plusMinus(expression: String): Int = TODO()
  * Вернуть индекс начала первого повторяющегося слова, или -1, если повторов нет.
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
-fun firstDuplicateIndex(str: String): Int = TODO()
+
+const val RussianAlphabet = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
+
+fun firstDuplicateIndex(str: String): Int {
+    var wordsLength = 0
+    var prevWord = "" to 0
+    for (word in str.toLowerCase().split(' ')) {
+        val newWordIndex = wordsLength
+        if (word == prevWord.first) return prevWord.second
+        else {
+            prevWord = word to newWordIndex
+            wordsLength += word.length + 1
+        }
+    }
+    return -1
+}
 
 /**
  * Сложная
@@ -157,7 +323,22 @@ fun firstDuplicateIndex(str: String): Int = TODO()
  * или пустую строку при нарушении формата строки.
  * Все цены должны быть больше либо равны нуля.
  */
-fun mostExpensive(description: String): String = TODO()
+fun mostExpensive(description: String): String {
+    var maxPrice = 0.0 to ""
+    for (product in description.split("; ")) {
+        if (product == "") return ""
+        val title = product.split(' ')[0].toLowerCase()
+        val price = product.split(' ')[1]
+        if (product.split(' ').isEmpty() || //Проверка на пустоту элемента
+            illegalSymbols(title, RussianAlphabet) ||
+            illegalSymbols(price, "0123456789.") ||
+            price[0] == '.' || //Проверка на неверный формат цены
+            price.toDouble() < 0.0
+        ) return "" //Проверка на неверный формат цены
+        if (price.toDouble() > maxPrice.first) maxPrice = price.toDouble() to title
+    }
+    return maxPrice.second.capitalize()
+}
 
 /**
  * Сложная

@@ -2,7 +2,7 @@
 
 package lesson5.task1
 
-import ru.spbstu.kotlin.generate.FromAlphabet
+import ru.spbstu.wheels.sorted
 
 
 /**
@@ -124,6 +124,7 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
 fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
     for (element in a) {
         if (b.contains(element.key) && b[element.key] == element.value) {
+            continue
         } else return false
     }
     return true
@@ -191,11 +192,11 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
         result += element.key to element.value
     }
     for (element in mapB) {
-        if (result[element.key].isNullOrEmpty() || (result[element.key] == element.value)) {
-            result += element.key to element.value
+        result += if (result[element.key].isNullOrEmpty() || (result[element.key] == element.value)) {
+            element.key to element.value
         } else {
             val newValue = "${result[element.key]}, ${element.value}"
-            result += element.key to newValue
+            element.key to newValue
         }
     }
     return result
@@ -360,7 +361,13 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *   findSumOfTwo(listOf(1, 2, 3), 4) -> Pair(0, 2)
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
-fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> = TODO()
+fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
+    for (element in list) {
+        if ((list.contains(number - element)) && (list.indexOf(element) != list.indexOf(number - element)))
+            return (list.indexOf(element) to list.indexOf(number - element)).sorted()
+    }
+    return -1 to -1
+}
 
 /**
  * Очень сложная

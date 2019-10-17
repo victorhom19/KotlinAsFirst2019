@@ -53,11 +53,14 @@ class Tests {
         assertEquals("", dateDigitToStr("ab.cd.ef"))
         assertEquals("", dateDigitToStr("32.09.2011"))
         assertEquals("", dateDigitToStr("29.02.1993"))
+        assertEquals("", dateDigitToStr("01.02.2019.19"))
     }
 
     @Test
     @Tag("Normal")
     fun flattenPhoneNumber() {
+        assertEquals("", flattenPhoneNumber("+7 (921)+ 123-45-67"))
+        assertEquals("", flattenPhoneNumber("7 (921) +123-45-67"))
         assertEquals("+79211234567", flattenPhoneNumber("+7 (921) 123-45-67"))
         assertEquals("123456798", flattenPhoneNumber("12 --  34- 5 -- 67 -98"))
         assertEquals("+12345", flattenPhoneNumber("+12 (3) 4-5"))
@@ -84,6 +87,9 @@ class Tests {
         assertEquals(226, bestHighJump("226 +"))
         assertEquals(-1, bestHighJump("???"))
         assertEquals(230, bestHighJump("220 + 224 %+ 228 %- 230 + 232 %%- 234 %"))
+        assertEquals(230, bestHighJump("220 + 224 %+ 228 %- 230 + 232 %%- 234 % 1770 %-%"))
+        assertEquals(-1, bestHighJump("220 + 224 %+ 228 %- 230 + 232 %%- 234 % abcd %-%"))
+        assertEquals(-1, bestHighJump("220 + 224 %+ 228 %- 230 + 232 %%- 234 % abcd +-%"))
     }
 
     @Test
@@ -94,6 +100,7 @@ class Tests {
         assertEquals(6, plusMinus("2 + 31 - 40 + 13"))
         assertEquals(-1, plusMinus("0 - 1"))
         assertThrows(IllegalArgumentException::class.java) { plusMinus("+2") }
+        assertThrows(IllegalArgumentException::class.java) { plusMinus("2+") }
         assertThrows(IllegalArgumentException::class.java) { plusMinus("+ 4") }
         assertThrows(IllegalArgumentException::class.java) { plusMinus("4 - -2") }
         assertThrows(IllegalArgumentException::class.java) { plusMinus("44 - - 12") }
@@ -107,6 +114,9 @@ class Tests {
         assertEquals(9, firstDuplicateIndex("Он пошёл в в школу"))
         assertEquals(40, firstDuplicateIndex("Яблоко упало на ветку с ветки оно упало на на землю"))
         assertEquals(9, firstDuplicateIndex("Мы пошли прямо Прямо располагался магазин"))
+        assertEquals(22, firstDuplicateIndex("Это пример строки для проверки проверки программы"))
+        assertEquals(31, firstDuplicateIndex("ЭТО ПРИМЕР СТРОКИ ДЛЯ ПРОВЕРКИ ПРОГРАММЫ ПРОГРАММЫ"))
+        assertEquals(11, firstDuplicateIndex("Это пример сТРоКи СТрОкИ для проверки ПРОГРАММЫ"))
     }
 
     @Test
@@ -115,6 +125,11 @@ class Tests {
         assertEquals("", mostExpensive(""))
         assertEquals("Курица", mostExpensive("Хлеб 39.9; Молоко 62.5; Курица 184.0; Конфеты 89.9"))
         assertEquals("Вино", mostExpensive("Вино 255.0"))
+        assertEquals("", mostExpensive("Хлеб -100.0; Молоко 62.5; Курица 184.0; Конфеты 89.9"))
+        assertEquals("Молоко", mostExpensive("Хлеб 39.9; Молоко 184.01; Курица 184; Конфеты 89.9"))
+        assertEquals("", mostExpensive("Хлеб 39.9; Молоко 62.59; ; Конфеты 89.9"))
+        assertEquals("", mostExpensive("Хлеб 39.9; Молоко .59; Курица 62.58; Конфеты 89.9"))
+        assertEquals("", mostExpensive("39.9 Хлеб; Молоко 62.59; Курица 62.58; Конфеты 89.9"))
     }
 
     @Test
