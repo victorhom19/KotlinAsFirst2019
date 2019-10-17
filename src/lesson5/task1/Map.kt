@@ -83,7 +83,6 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
     return res
 }
 
-
 /**
  * Простая
  *
