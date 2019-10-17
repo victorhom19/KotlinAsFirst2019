@@ -1,5 +1,3 @@
-@file:Suppress("UNUSED_PARAMETER")
-
 package lesson3.task1
 
 import kotlin.math.*
@@ -97,7 +95,7 @@ fun fib(n: Int): Int {
         presentNumber += previousNumber
         previousNumber = t
     }
-    return (presentNumber)
+    return presentNumber
 }
 
 
@@ -119,7 +117,7 @@ fun lcm(m: Int, n: Int): Int {
         numberA = numberB
         numberB = temp
     }
-    return (m / gcd * n)
+    return m / gcd * n
 }
 
 /**
@@ -135,7 +133,7 @@ fun minDivisor(n: Int): Int {
             break
         }
     }
-    return (result)
+    return result
 }
 
 /**
@@ -225,7 +223,7 @@ fun sin(x: Double, eps: Double): Double {
         numberPower += 2
         print("$newMember ")
     }
-    return (result)
+    return result
 }
 
 /**
@@ -258,7 +256,7 @@ fun cos(x: Double, eps: Double): Double {
         }
         numberPower += 2
     }
-    return (result)
+    return result
 }
 
 /**
@@ -275,7 +273,7 @@ fun revert(n: Int): Int {
         result = result * 10 + number % 10
         number /= 10
     }
-    return (result)
+    return result
 }
 
 /**
