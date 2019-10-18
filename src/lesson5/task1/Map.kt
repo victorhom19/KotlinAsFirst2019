@@ -94,20 +94,12 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  *     -> mapOf(5 to listOf("Семён", "Михаил"), 3 to listOf("Марат"))
  */
 fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
-    val result = mutableMapOf<Int, List<String>>()
-    var gradesList = mutableListOf<String>()
-    for (mark in 2..5) {
-        for (element in grades) {
-            if (element.value == mark) {
-                gradesList.add(element.key)
-            }
-        }
-        if (gradesList.isNotEmpty()) {
-            result[mark] = gradesList
-            gradesList = mutableListOf()
-        }
+    val gradesList = mutableMapOf<Int,List<String>>()
+    for (students in grades) {
+        if (gradesList[students.value] == null) gradesList[students.value] = listOf(students.key)
+        else gradesList[students.value] = gradesList[students.value] !!+ students.key
     }
-    return (result)
+    return gradesList
 }
 
 /**
@@ -158,15 +150,7 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) {
  * В выходном списке не должно быть повторяюихся элементов,
  * т. е. whoAreInBoth(listOf("Марат", "Семён, "Марат"), listOf("Марат", "Марат")) == listOf("Марат")
  */
-fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
-    val result = mutableListOf<String>()
-    for (element in a) {
-        if (element in b) {
-            result.add(0, element)
-        }
-    }
-    return result
-}
+fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.filter{ it in b && it != ""}
 
 /**
  * Средняя
