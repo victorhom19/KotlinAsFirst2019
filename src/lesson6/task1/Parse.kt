@@ -101,10 +101,10 @@ fun dateStrToDigit(str: String): String {
         }
         val year = str.split(" ")[2].toInt()
         return if (
-            day > 1 && day < daysInMonth(month, year) &&
+            day > 0 && day <= daysInMonth(month, year) &&
             year > 0 &&
             month > 0
-        ) "${twoDigitStr(day)}.${twoDigitStr(month)}.${year}"
+        ) "${twoDigitStr(day)}.${twoDigitStr(month)}.$year"
         else ""
     } catch (e: Exception) {
         return ""
@@ -142,7 +142,7 @@ fun dateDigitToStr(digital: String): String {
         val year = digital.split(".")[2].toInt()
         return if (
             digital.split(".").size == 3 &&
-            day > 0 && day < daysInMonth(digital.split(".")[1].toInt(), year) &&
+            day > 0 && day <= daysInMonth(digital.split(".")[1].toInt(), year) &&
             year > 0 &&
             month != "invalid"
         ) "$day $month $year"
@@ -172,6 +172,7 @@ fun flattenPhoneNumber(phone: String): String {
     if (illegalSymbols(newPhone, "0123456789+()")) return ""
     for (char in newPhone) {
         when {
+            newPhone.filter { it !in "+()" } == "" -> return ""
             //Проверка на повторяющиеся знаки + ( )
             char in listOf('+', '(', ')') -> {
                 if (notRepeatable[char]!! == 1) return ""
@@ -296,11 +297,9 @@ fun plusMinus(expression: String): Int {
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
 
-const val RussianAlphabet = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
-
 fun firstDuplicateIndex(str: String): Int {
     var wordsLength = 0
-    var prevWord = "" to 0
+    var prevWord = Pair<String?, Int>(null, 0)
     for (word in str.toLowerCase().split(' ')) {
         val newWordIndex = wordsLength
         if (word == prevWord.first) return prevWord.second
@@ -324,17 +323,15 @@ fun firstDuplicateIndex(str: String): Int {
  * Все цены должны быть больше либо равны нуля.
  */
 fun mostExpensive(description: String): String {
-    var maxPrice = 0.0 to ""
+    var maxPrice = 0.0 to "Any good with price 0.0"
     for (product in description.split("; ")) {
         if (product == "") return ""
-        val title = product.split(' ')[0].toLowerCase()
+        val title = product.split(' ')[0]
         val price = product.split(' ')[1]
-        if (product.split(' ').isEmpty() || //Проверка на пустоту элемента
-            illegalSymbols(title, RussianAlphabet) ||
+        if (product.split(' ').isEmpty() ||
             illegalSymbols(price, "0123456789.") ||
-            price[0] == '.' || //Проверка на неверный формат цены
-            price.toDouble() < 0.0
-        ) return "" //Проверка на неверный формат цены
+            price[0] == '.'
+        ) return ""
         if (price.toDouble() > maxPrice.first) maxPrice = price.toDouble() to title
     }
     return maxPrice.second.capitalize()

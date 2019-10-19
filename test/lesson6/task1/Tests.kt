@@ -41,6 +41,7 @@ class Tests {
         assertEquals("03.04.2011", dateStrToDigit("3 апреля 2011"))
         assertEquals("", dateStrToDigit("32 сентября 2011"))
         assertEquals("", dateStrToDigit("29 февраля 1993"))
+        assertEquals("01.01.1", dateStrToDigit("01 января 1"))
     }
 
     @Test
@@ -54,6 +55,7 @@ class Tests {
         assertEquals("", dateDigitToStr("32.09.2011"))
         assertEquals("", dateDigitToStr("29.02.1993"))
         assertEquals("", dateDigitToStr("01.02.2019.19"))
+        assertEquals("31 января 1", dateDigitToStr("31.01.1"))
     }
 
     @Test
@@ -69,6 +71,7 @@ class Tests {
         assertEquals("+42566789", flattenPhoneNumber("+42(56 -- 67)89"))
         assertEquals("", flattenPhoneNumber("ab-123"))
         assertEquals("", flattenPhoneNumber("134_+874"))
+        assertEquals("", flattenPhoneNumber("+)(()"))
     }
 
     @Test
@@ -117,6 +120,7 @@ class Tests {
         assertEquals(22, firstDuplicateIndex("Это пример строки для проверки проверки программы"))
         assertEquals(31, firstDuplicateIndex("ЭТО ПРИМЕР СТРОКИ ДЛЯ ПРОВЕРКИ ПРОГРАММЫ ПРОГРАММЫ"))
         assertEquals(11, firstDuplicateIndex("Это пример сТРоКи СТрОкИ для проверки ПРОГРАММЫ"))
+        assertEquals(-1, firstDuplicateIndex(""))
     }
 
     @Test
@@ -130,6 +134,7 @@ class Tests {
         assertEquals("", mostExpensive("Хлеб 39.9; Молоко 62.59; ; Конфеты 89.9"))
         assertEquals("", mostExpensive("Хлеб 39.9; Молоко .59; Курица 62.58; Конфеты 89.9"))
         assertEquals("", mostExpensive("39.9 Хлеб; Молоко 62.59; Курица 62.58; Конфеты 89.9"))
+        assertEquals("Any good with price 0.0", mostExpensive("a 0"))
     }
 
     @Test

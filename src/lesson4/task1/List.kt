@@ -9,7 +9,7 @@ import kotlin.math.sqrt
 
 val alphabet = listOf(
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'g', 'k', 'l', 'm', 'n', 'o', 'p',
+    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
     'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
 )
 
@@ -180,13 +180,22 @@ fun times(a: List<Int>, b: List<Int>): Int {
  * Коэффициенты многочлена заданы списком p: (p0, p1, p2, p3, ..., pN).
  * Значение пустого многочлена равно 0 при любом x.
  */
+fun intPow(x: Int, y: Int): Int {
+    var number = x
+    if (y == 0) return 1
+    for (i in 0 until y - 1) {
+        number *= x
+    }
+    return number
+}
+
 fun polynom(p: List<Int>, x: Int): Int {
     if (p.isEmpty()) return 0
-    var result = 0.0
+    var result = 0
     for (i in p.indices) {
-        result += p[i] * x.toDouble().pow(i)
+        result += p[i] * intPow(x, i)
     }
-    return result.toInt()
+    return result
 }
 
 /**

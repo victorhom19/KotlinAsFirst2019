@@ -94,10 +94,10 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  *     -> mapOf(5 to listOf("Семён", "Михаил"), 3 to listOf("Марат"))
  */
 fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
-    val gradesList = mutableMapOf<Int,List<String>>()
+    val gradesList = mutableMapOf<Int, List<String>>()
     for (students in grades) {
         if (gradesList[students.value] == null) gradesList[students.value] = listOf(students.key)
-        else gradesList[students.value] = gradesList[students.value] !!+ students.key
+        else gradesList[students.value] = gradesList[students.value]!! + students.key
     }
     return gradesList
 }
@@ -113,8 +113,8 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "zee", "b" to "sweet")) -> false
  */
 fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
-    for (element in a) {
-        if (b.contains(element.key) && b[element.key] == element.value) {
+    for ((key, value) in a) {
+        if (b.contains(key) && b[key] == value) {
             continue
         } else return false
     }
@@ -136,9 +136,9 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
  *     -> a changes to mutableMapOf() aka becomes empty
  */
 fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) {
-    for (element in b) {
-        if (a.contains(element.key) && a[element.key] == element.value) {
-            a.remove(element.key)
+    for ((key, value) in b) {
+        if (a.contains(key) && a[key] == value) {
+            a.remove(key)
         }
     }
 }
@@ -150,7 +150,7 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) {
  * В выходном списке не должно быть повторяюихся элементов,
  * т. е. whoAreInBoth(listOf("Марат", "Семён, "Марат"), listOf("Марат", "Марат")) == listOf("Марат")
  */
-fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.filter{ it in b && it != ""}
+fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.filter { it in b }.toSet().toList()
 
 /**
  * Средняя
@@ -171,15 +171,15 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.filter{ it 
  */
 fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
     val result = mutableMapOf<String, String>()
-    for (element in mapA) {
-        result += element.key to element.value
+    for ((key, value) in mapA) {
+        result += key to value
     }
-    for (element in mapB) {
-        result += if (result[element.key].isNullOrEmpty() || (result[element.key] == element.value)) {
-            element.key to element.value
+    for ((key, value) in mapB) {
+        result += if (result[key] == null || (result[key] == value)) {
+            key to value
         } else {
-            val newValue = "${result[element.key]}, ${element.value}"
-            element.key to newValue
+            val newValue = "${result[key]}, $value"
+            key to newValue
         }
     }
     return result
@@ -197,13 +197,17 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
  */
 fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
     val result = mutableMapOf<String, Double>()
-    for (element in stockPrices) {
-        result += if (result[element.first] == null) {
-            element.first to element.second
-        } else {
-            val newValue = ((result[element.first] ?: error("")) + element.second) / 2
-            element.first to newValue
+    val products = mutableListOf<String>()
+    for (product in stockPrices) {
+        products += product.first
+    }
+    for (product in products) {
+        var averagePrice = 0.0
+        for ((title, price) in stockPrices) {
+            if (title == product) averagePrice += price
         }
+        averagePrice /= (stockPrices.filter { it.first == product }).size
+        result[product] = averagePrice
     }
     return result
 }
@@ -225,10 +229,11 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
  */
 fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
     var cheapest = Pair<String?, Double?>(null, null)
-    for (element in stuff) {
-        if (element.value.first == kind && element.value.second < cheapest.second ?: Double.MAX_VALUE) {
-            cheapest = element.key to element.value.second
-        }
+    for ((key, value) in stuff) {
+        if (value.first == kind && cheapest.second == null)
+            cheapest = key to value.second
+        if (value.first == kind && value.second < cheapest.second!!)
+            cheapest = key to value.second
     }
     return cheapest.first
 }
@@ -286,6 +291,7 @@ fun extractRepeats(list: List<String>): Map<String, Int> {
 fun hasAnagrams(words: List<String>): Boolean {
     val wordsAlphabet = mutableListOf<Set<Char>>()
     for (word in words) {
+        if (word == "") continue
         val alphabet = mutableSetOf<Char>()
         for (letter in word) {
             alphabet.add(letter)
@@ -345,9 +351,9 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
-    for (element in list) {
-        if ((list.contains(number - element)) && (list.indexOf(element) != list.indexOf(number - element)))
-            return (list.indexOf(element) to list.indexOf(number - element)).sorted()
+    for (i in list.indices) {
+        if (list.subList(i + 1, list.lastIndex + 1).contains(number - list[i]))
+            return i to list.subList(i + 1, list.lastIndex + 1).indexOf(number - list[i]) + i + 1
     }
     return -1 to -1
 }

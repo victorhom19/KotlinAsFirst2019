@@ -160,8 +160,12 @@ class Tests {
             whoAreInBoth(listOf("Marat", "Mikhail"), listOf("Sveta", "Kirill"))
         )
         assertEquals(
-            listOf<String>(),
+            listOf(""),
             whoAreInBoth(listOf("",""), listOf(""))
+        )
+        assertEquals(
+            listOf(""),
+            whoAreInBoth(listOf(""), listOf(""))
         )
     }
 
@@ -217,6 +221,7 @@ class Tests {
             mapOf("MSFT" to 150.0, "NFLX" to 45.0),
             averageStockPrice(listOf("MSFT" to 100.0, "MSFT" to 200.0, "NFLX" to 40.0, "NFLX" to 50.0))
         )
+        averageStockPrice(listOf("" to -49595973815875140000.0, "" to 0.6777327922134438, "" to 0.9979024790358653))
     }
 
     @Test
@@ -233,6 +238,13 @@ class Tests {
             findCheapestStuff(
                 mapOf("Мария" to ("печенье" to 20.0), "Орео" to ("печенье" to 100.0)),
                 "печенье"
+            )
+        )
+        assertEquals(
+            "",
+            findCheapestStuff(
+                mapOf("" to ("" to 1.7976931348623157e+308)),
+                ""
             )
         )
     }
@@ -268,6 +280,7 @@ class Tests {
         assertFalse(hasAnagrams(emptyList()))
         assertTrue(hasAnagrams(listOf("рот", "свет", "тор")))
         assertFalse(hasAnagrams(listOf("рот", "свет", "код", "дверь")))
+        assertFalse(hasAnagrams(listOf("a", "")))
     }
 
     @Test
@@ -320,6 +333,10 @@ class Tests {
         assertEquals(
             Pair(3, 17),
             findSumOfTwo(listOf(1, 2, 3, 7, 10, 3, 14, 256, 48, 31, 17, 2, 9, 3, 7, 7, 7, 24), 31)
+        )
+        assertEquals(
+            Pair(0, 1),
+            findSumOfTwo(listOf(0, 0), 0)
         )
     }
 
