@@ -102,7 +102,7 @@ fun dateStrToDigit(str: String): String {
         val year = str.split(" ")[2].toInt()
         return if (
             day > 0 && day <= daysInMonth(month, year) &&
-            year > 0 &&
+            year >= 0 &&
             month > 0
         ) "${twoDigitStr(day)}.${twoDigitStr(month)}.$year"
         else ""
@@ -143,7 +143,7 @@ fun dateDigitToStr(digital: String): String {
         return if (
             digital.split(".").size == 3 &&
             day > 0 && day <= daysInMonth(digital.split(".")[1].toInt(), year) &&
-            year > 0 &&
+            year >= 0 &&
             month != "invalid"
         ) "$day $month $year"
         else ""
@@ -323,7 +323,7 @@ fun firstDuplicateIndex(str: String): Int {
  * Все цены должны быть больше либо равны нуля.
  */
 fun mostExpensive(description: String): String {
-    var maxPrice = 0.0 to "Any good with price 0.0"
+    var maxPrice = 0.0 to ""
     for (product in description.split("; ")) {
         if (product == "") return ""
         val title = product.split(' ')[0]
