@@ -348,7 +348,41 @@ fun mostExpensive(description: String): String {
  *
  * Вернуть -1, если roman не является корректным римским числом
  */
-fun fromRoman(roman: String): Int = TODO()
+fun fromRoman(roman: String): Int {
+    var stroke = 0
+    var passedDouble = false
+    for (i in 0 until roman.lastIndex + 1) {
+        if (passedDouble) {
+            passedDouble = false
+            continue
+        }
+        if (roman.length != i+1 && roman[i] + roman[i+1].toString() in listOf("IV", "IX", "XL", "XC", "CD", "CM")) {
+            stroke += when (roman[i] + roman[i+1].toString()) {
+                "IV" -> 4
+                "IX" -> 9
+                "XL" -> 40
+                "XC" -> 90
+                "CD" -> 400
+                "CM" -> 900
+                else -> 0
+            }
+            passedDouble = true
+        }
+        else {
+            stroke += when (roman[i]) {
+                'I' -> 1
+                'V' -> 5
+                'X' -> 10
+                'L' -> 50
+                'C' -> 100
+                'D' -> 500
+                'M' -> 1000
+                else -> return -1
+            }
+        }
+    }
+    return stroke
+}
 
 /**
  * Очень сложная

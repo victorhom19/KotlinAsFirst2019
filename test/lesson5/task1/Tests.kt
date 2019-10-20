@@ -117,7 +117,7 @@ class Tests {
                 .mapValues { (_, v) -> v.sorted() }
         )
         assertEquals(
-            mapOf<Int, List<String>>(0 to listOf("")),
+            mapOf(0 to listOf("")),
             buildGrades(mapOf("" to 0))
         )
     }
@@ -161,7 +161,7 @@ class Tests {
         )
         assertEquals(
             listOf(""),
-            whoAreInBoth(listOf("",""), listOf(""))
+            whoAreInBoth(listOf("", ""), listOf(""))
         )
         assertEquals(
             listOf(""),
@@ -282,6 +282,7 @@ class Tests {
         assertTrue(hasAnagrams(listOf("рот", "свет", "тор")))
         assertFalse(hasAnagrams(listOf("рот", "свет", "код", "дверь")))
         assertFalse(hasAnagrams(listOf("a", "")))
+        assertTrue(hasAnagrams(listOf("a", "", "")))
         assertTrue(hasAnagrams(listOf("", "")))
     }
 
@@ -360,7 +361,6 @@ class Tests {
             )
         )
     }
-
 
     // TODO: map task tests
 }

@@ -2,8 +2,6 @@
 
 package lesson5.task1
 
-import ru.spbstu.wheels.sorted
-
 
 /**
  * Пример
@@ -301,8 +299,7 @@ fun hasAnagrams(words: List<String>): Boolean {
         }
         wordsAlphabet.add(alphabet)
     }
-    print("$wordsAlphabet ")
-    for (i in wordsAlphabet.indices - 1) {
+    for (i in wordsAlphabet.indices) {
         for (j in i + 1..wordsAlphabet.lastIndex) {
             if (wordsAlphabet[i].isEmpty() || wordsAlphabet[j].isEmpty()) {
                 if (wordsAlphabet[i].isEmpty() && wordsAlphabet[j].isEmpty()) return true
@@ -338,7 +335,32 @@ fun hasAnagrams(words: List<String>): Boolean {
  *        )
  */
 
-fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> = TODO()
+fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
+    val seen = mutableSetOf<String>()
+    val allFriends = mutableSetOf<String>()
+    val friendsNames = mutableSetOf<String>()
+    for ((key, values) in friends) {
+        friendsNames += key
+        for (value in values) {
+            friendsNames += value
+        }
+    }
+    fun whoIsFriend(name: String, friends: Map<String, Set<String>>): Set<String> {
+        seen += name
+        for (friend in friends.getOrDefault(name, setOf())) {
+            if (friend !in seen) allFriends += (whoIsFriend(friend, friends) + friend)
+            seen += friend
+        }
+        return allFriends
+    }
+    val result = mutableMapOf<String, Set<String>>()
+    for (name in friendsNames) {
+        allFriends.clear()
+        seen.clear()
+        result[name] = whoIsFriend(name, friends).toSet()
+    }
+    return result
+}
 
 /**
  * Сложная
