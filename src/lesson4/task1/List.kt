@@ -3,15 +3,11 @@
 package lesson4.task1
 
 import lesson1.task1.discriminant
+import lesson3.task1.isPrime
 import lesson3.task1.minDivisor
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-val alphabet = listOf(
-    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
-    'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
-)
 
 /**
  * Пример
@@ -128,8 +124,7 @@ fun abs(v: List<Double>): Double {
     for (componentVector in v) {
         resultVector += componentVector.pow(2)
     }
-    resultVector = sqrt(resultVector)
-    return resultVector
+    return sqrt(resultVector)
 }
 
 /**
@@ -148,7 +143,6 @@ fun mean(list: List<Double>): Double = if (list.isNotEmpty()) list.sum() / list.
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun center(list: MutableList<Double>): MutableList<Double> {
-    if (list.isEmpty()) return list
     val mean = mean(list)
     for (i in list.indices) {
         list[i] -= mean
@@ -164,7 +158,6 @@ fun center(list: MutableList<Double>): MutableList<Double> {
  * C = a1b1 + a2b2 + ... + aNbN. Произведение пустых векторов считать равным 0.
  */
 fun times(a: List<Int>, b: List<Int>): Int {
-    if (a.isEmpty()) return 0
     var result = 0
     for (i in a.indices) {
         result += a[i] * b[i]
@@ -180,20 +173,14 @@ fun times(a: List<Int>, b: List<Int>): Int {
  * Коэффициенты многочлена заданы списком p: (p0, p1, p2, p3, ..., pN).
  * Значение пустого многочлена равно 0 при любом x.
  */
-fun intPow(x: Int, y: Int): Int {
-    var number = x
-    if (y == 0) return 1
-    for (i in 0 until y - 1) {
-        number *= x
-    }
-    return number
-}
 
 fun polynom(p: List<Int>, x: Int): Int {
     if (p.isEmpty()) return 0
     var result = 0
+    var xPow = 1
     for (i in p.indices) {
-        result += p[i] * intPow(x, i)
+        result += p[i] * xPow
+        xPow *= x
     }
     return result
 }
@@ -209,12 +196,10 @@ fun polynom(p: List<Int>, x: Int): Int {
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun accumulate(list: MutableList<Int>): MutableList<Int> {
-    if (list.isNotEmpty()) {
-        var sum = 0
-        for (i in list.indices) {
-            sum += list[i]
-            list[i] = sum
-        }
+    var sum = 0
+    for (i in list.indices) {
+        sum += list[i]
+        list[i] = sum
     }
     return list
 }
@@ -229,9 +214,12 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> {
 fun factorize(n: Int): List<Int> {
     val simpleMultipliers = mutableListOf<Int>()
     var number = n
+    var minDivisor: Int
+    if (isPrime(n)) return listOf(n)
     while (number > 1) {
-        simpleMultipliers.add(minDivisor(number))
-        number /= minDivisor(number)
+        minDivisor = minDivisor(number)
+        simpleMultipliers.add(minDivisor)
+        number /= minDivisor
     }
     return simpleMultipliers
 }
@@ -277,7 +265,8 @@ fun convert(n: Int, base: Int): List<Int> {
 fun convertToString(n: Int, base: Int): String {
     var stroke = ""
     for (digit in convert(n, base)) {
-        stroke += alphabet[digit]
+        stroke += if (digit in 0..9) '0' + digit
+        else 'a' + digit - 10
     }
     return stroke
 }
@@ -289,13 +278,7 @@ fun convertToString(n: Int, base: Int): String {
  * из системы счисления с основанием base в десятичную.
  * Например: digits = (1, 3, 12), base = 14 -> 250
  */
-fun decimal(digits: List<Int>, base: Int): Int {
-    var result = 0
-    for (i in digits) {
-        result = result * base + i
-    }
-    return (result)
-}
+fun decimal(digits: List<Int>, base: Int): Int = polynom(digits.reversed(), base)
 
 /**
  * Сложная
@@ -312,7 +295,8 @@ fun decimal(digits: List<Int>, base: Int): Int {
 fun decimalFromString(str: String, base: Int): Int {
     var result = 0
     for (char in str) {
-        result = result * base + alphabet.indexOf(char)
+        result = if (char in "0123456789") result * base + (char.toInt() - 48)
+        else result * base + (char.toInt() - 87)
     }
     return (result)
 }
@@ -328,21 +312,18 @@ fun decimalFromString(str: String, base: Int): Int {
 fun roman(n: Int): String {
     var number = n
     var stroke = ""
-    val keyAlphabet = listOf('C', 'C', 'X', 'X', 'I', 'I', 'I')
-    val keyAlphabetValues = listOf(100, 100, 10, 10, 1, 1, 1)
-    val rAlphabet = listOf('M', 'D', 'C', 'L', 'X', 'V', 'I')
-    val rAlphabetValues = listOf(1000, 500, 100, 50, 10, 5, 1)
-    for (i in rAlphabet.indices) {
-        while (number >= rAlphabetValues[i]) {
-            stroke += rAlphabet[i]
-            number -= rAlphabetValues[i]
-        }
-        if ((number > 1) && (number >= rAlphabetValues[i] - keyAlphabetValues[i])) {
-            stroke = stroke + keyAlphabet[i] + rAlphabet[i]
-            number = number + keyAlphabetValues[i] - rAlphabetValues[i]
+    val rAlphabet = listOf("M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I")
+    val rAlphabetValues = listOf(1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1)
+    loop@ while (number > 0) {
+        for (i in rAlphabet.indices) {
+            if (number >= rAlphabetValues[i]) {
+                number -= rAlphabetValues[i]
+                stroke += rAlphabet[i]
+                continue@loop
+            }
         }
     }
-    return (stroke)
+    return stroke
 }
 
 /**
@@ -353,103 +334,47 @@ fun roman(n: Int): String {
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
 fun russian(n: Int): String {
-    val thousands = n / 1000
-    val hundreds = n % 1000
-    var stroke = ""
-    if (thousands != 0) {
-        stroke += when (thousands / 100) {
-            1 -> "сто "
-            2 -> "двести "
-            3 -> "триста "
-            4 -> "четыреста "
-            5 -> "пятьсот "
-            6 -> "шестьсот "
-            7 -> "семьсот "
-            8 -> "восемьсот "
-            9 -> "девятьсот "
+    fun nameTriple(number: Int): MutableList<String> {
+        val stroke = mutableListOf<String>()
+        stroke += when (number / 100) {
+            1 -> "сто"
+            2 -> "двести"
+            3 -> "триста"
+            4 -> "четыреста"
+            5 -> "пятьсот"
+            6 -> "шестьсот"
+            7 -> "семьсот"
+            8 -> "восемьсот"
+            9 -> "девятьсот"
             else -> ""
         }
-        if (thousands % 100 in 11..19) {
-            stroke += when (thousands % 100) {
-                11 -> "одиннадцать тысяч "
-                12 -> "двенадцать тысяч "
-                13 -> "тринадцать тысяч "
-                14 -> "четырнадцать тысяч "
-                15 -> "пятнадцать тысяч "
-                16 -> "шестнадцать тысяч "
-                17 -> "семнадцать тысяч "
-                18 -> "восемнадцать тысяч "
-                19 -> "девятнадцать тысяч "
+        if (number % 100 in 11..19) {
+            stroke += when (number % 100) {
+                11 -> "одиннадцать"
+                12 -> "двенадцать"
+                13 -> "тринадцать"
+                14 -> "четырнадцать"
+                15 -> "пятнадцать"
+                16 -> "шестнадцать"
+                17 -> "семнадцать"
+                18 -> "восемнадцать"
+                19 -> "девятнадцать"
                 else -> ""
             }
         } else {
-            stroke += when (thousands / 10 % 10) {
-                1 -> "десять "
-                2 -> "двадцать "
-                3 -> "тридцать "
-                4 -> "сорок "
-                5 -> "пятьдесят "
-                6 -> "шестьдесят "
-                7 -> "семьдесят "
-                8 -> "восемьдесят "
-                9 -> "девяносто "
+            stroke += when (number / 10 % 10) {
+                1 -> "десять"
+                2 -> "двадцать"
+                3 -> "тридцать"
+                4 -> "сорок"
+                5 -> "пятьдесят"
+                6 -> "шестьдесят"
+                7 -> "семьдесят"
+                8 -> "восемьдесят"
+                9 -> "девяносто"
                 else -> ""
             }
-            stroke += when (thousands % 10) {
-                0 -> "тысяч "
-                1 -> "одна тысяча "
-                2 -> "две тысячи "
-                3 -> "три тысячи "
-                4 -> "четыре тысячи "
-                5 -> "пять тысяч "
-                6 -> "шесть тысяч "
-                7 -> "семь тысяч "
-                8 -> "восемь тысяч "
-                9 -> "девять тысяч "
-                else -> ""
-            }
-        }
-    }
-    if (hundreds != 0) {
-        stroke += when (hundreds / 100) {
-            1 -> "сто "
-            2 -> "двести "
-            3 -> "триста "
-            4 -> "четыреста "
-            5 -> "пятьсот "
-            6 -> "шестьсот "
-            7 -> "семьсот "
-            8 -> "восемьсот "
-            9 -> "девятьсот "
-            else -> ""
-        }
-        if (hundreds % 100 in 11..19) {
-            stroke += when (hundreds % 100) {
-                11 -> "одиннадцать "
-                12 -> "двенадцать "
-                13 -> "тринадцать "
-                14 -> "четырнадцать "
-                15 -> "пятнадцать "
-                16 -> "шестнадцать "
-                17 -> "семнадцать "
-                18 -> "восемнадцать "
-                19 -> "девятнадцать "
-                else -> ""
-            }
-        } else {
-            stroke += when (hundreds / 10 % 10) {
-                1 -> "десять "
-                2 -> "двадцать "
-                3 -> "тридцать "
-                4 -> "сорок "
-                5 -> "пятьдесят "
-                6 -> "шестьдесят "
-                7 -> "семьдесят "
-                8 -> "восемьдесят "
-                9 -> "девяносто "
-                else -> ""
-            }
-            stroke += when (hundreds % 10) {
+            stroke += when (number % 10) {
                 1 -> "один"
                 2 -> "два"
                 3 -> "три"
@@ -462,6 +387,18 @@ fun russian(n: Int): String {
                 else -> ""
             }
         }
+        return stroke
     }
-    return stroke.trim()
+
+    val thousands = nameTriple(n / 1000).filter { it != "" }.toMutableList()
+    val hundreds = nameTriple(n % 1000).filter { it != "" }.toMutableList()
+    if (thousands.isNotEmpty()) {
+        when (thousands[thousands.lastIndex]) {
+            "один" -> thousands[thousands.lastIndex] = "одна тысяча"
+            "два" -> thousands[thousands.lastIndex] = "две тысячи"
+            "три", "четыре" -> thousands += "тысячи"
+            else -> thousands += "тысяч"
+        }
+    }
+    return (thousands + hundreds).joinToString(separator = " ")
 }

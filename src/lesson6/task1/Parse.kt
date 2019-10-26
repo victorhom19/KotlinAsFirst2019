@@ -364,7 +364,7 @@ fun fromRoman(roman: String): Int {
                 "XC" -> 90
                 "CD" -> 400
                 "CM" -> 900
-                else -> 0
+                else -> -1
             }
             passedDouble = true
         }

@@ -82,10 +82,6 @@ fun digitNumber(n: Int): Int {
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
 fun fib(n: Int): Int {
-    /*Был вариант сделать рекурсией, но это занимает слишком много ресурсов компьютера.
-    Так итоговое время теста составило 59 секунд.
-    Код:
-    fun fib(n: Int): Int = return if (n == 1 || n == 2) 1 else fib(n - 1) + fib(n - 2)*/
     var previousNumber = 1
     var presentNumber = 1
     var t: Int
@@ -110,12 +106,10 @@ fun lcm(m: Int, n: Int): Int {
     var numberA = max(m, n)
     var numberB = min(m, n)
     var gcd = numberB
-    var temp = numberA % numberB
-    while (temp != 0) {
-        gcd = temp
-        temp = numberA % numberB
+    while (numberA % numberB != 0) {
+        gcd = numberA % numberB
         numberA = numberB
-        numberB = temp
+        numberB = gcd
     }
     return m / gcd * n
 }
@@ -126,14 +120,10 @@ fun lcm(m: Int, n: Int): Int {
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
 fun minDivisor(n: Int): Int {
-    var result = n
     for (i in 2..sqrt(n.toDouble()).toInt()) {
-        if (n % i == 0) {
-            result = i
-            break
-        }
+        if (n % i == 0) return i
     }
-    return result
+    return n
 }
 
 /**
@@ -202,29 +192,18 @@ fun collatzSteps(x: Int): Int {
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
 fun sin(x: Double, eps: Double): Double {
-    var numberPower = 1
-    var number = x
-    while (number >= 2.0 * PI) {
-        number -= 2.0 * PI
-    }
-    while (number <= -2.0 * PI) {
-        number += 2.0 * PI
-    }
+    var factorialCounter = 1
+    val number = (x % (2 * PI)).pow(2)
     var result = 0.0
-    var newMember: Double
-    while (true) {
-        newMember = (number.pow(numberPower)) / factorial(numberPower)
-        if (abs(newMember) < eps) break
-        if (numberPower % 4 == 1) {
-            result += newMember
-        } else {
-            result -= newMember
-        }
-        numberPower += 2
-        print("$newMember ")
+    var newMember = x % (2 * PI)
+    while (abs(newMember) >= eps) {
+        result += newMember
+        newMember = -1.0 * ((newMember * number) / ((factorialCounter + 1) * (factorialCounter + 2)))
+        factorialCounter += 2
     }
     return result
 }
+
 
 /**
  * Средняя
@@ -236,28 +215,18 @@ fun sin(x: Double, eps: Double): Double {
  * Использовать kotlin.math.cos и другие стандартные реализации функции косинуса в этой задаче запрещается.
  */
 fun cos(x: Double, eps: Double): Double {
-    var numberPower = 0
-    var number = x
-    while (number >= 2 * PI) {
-        number -= 2 * PI
-    }
-    while (number <= 2 * PI) {
-        number += 2 * PI
-    }
+    var factorialCounter = 0
+    val number = (x % (2 * PI)).pow(2)
     var result = 0.0
-    var newMember: Double
-    while (true) {
-        newMember = (number.pow(numberPower)) / factorial(numberPower)
-        if (newMember < eps) break
-        if (numberPower % 4 == 0) {
-            result += newMember
-        } else {
-            result -= newMember
-        }
-        numberPower += 2
+    var newMember = 1.0
+    while (abs(newMember) >= eps) {
+        result += newMember
+        newMember = -1.0 * ((newMember * number) / ((factorialCounter + 1) * (factorialCounter + 2)))
+        factorialCounter += 2
     }
     return result
 }
+
 
 /**
  * Средняя
@@ -315,21 +284,14 @@ fun hasDifferentDigits(n: Int): Boolean {
  */
 fun squareSequenceDigit(n: Int): Int {
     var generatedSquare: Int
-    var generator = 1
+    var generator = 0
     var strokeLength = 0
-    val result: Double
-    while (true) {
+    do {
+        generator++
         generatedSquare = generator * generator
-        if (strokeLength + digitNumber(generatedSquare) >= n) {
-            /*Использование Double из-за необходимости использования pow*/
-            result = generatedSquare / 10.0.pow(digitNumber(generatedSquare) + strokeLength - n) % 10
-            break
-        } else {
-            strokeLength += digitNumber(generatedSquare)
-            generator += 1
-        }
-    }
-    return result.toInt()
+        strokeLength += digitNumber(generatedSquare)
+    } while (strokeLength < n)
+    return (generatedSquare / 10.0.pow(strokeLength - n) % 10).toInt()
 }
 
 
@@ -344,19 +306,14 @@ fun squareSequenceDigit(n: Int): Int {
  */
 fun fibSequenceDigit(n: Int): Int {
     var generatedFib: Int
-    var generator = 1
+    var generator = 0
     var strokeLength = 0
-    val result: Double
-    while (true) {
+    do {
+        generator++
         generatedFib = fib(generator)
-        if (strokeLength + digitNumber(generatedFib) >= n) {
-            /*Переход к Double из-за необходимости использования pow*/
-            result = generatedFib / 10.0.pow(digitNumber(generatedFib) + strokeLength - n) % 10
-            break
-        } else {
-            strokeLength += digitNumber(generatedFib)
-            generator += 1
-        }
-    }
-    return result.toInt()
+        strokeLength += digitNumber(generatedFib)
+    } while (strokeLength < n)
+    return (generatedFib / 10.0.pow(strokeLength - n) % 10).toInt()
 }
+
+
