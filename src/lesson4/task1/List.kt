@@ -4,7 +4,6 @@ package lesson4.task1
 
 import lesson1.task1.discriminant
 import lesson3.task1.isPrime
-import lesson3.task1.minDivisor
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -211,15 +210,18 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> {
  * Результат разложения вернуть в виде списка множителей, например 75 -> (3, 5, 5).
  * Множители в списке должны располагаться по возрастанию.
  */
+
 fun factorize(n: Int): List<Int> {
     val simpleMultipliers = mutableListOf<Int>()
     var number = n
-    var minDivisor: Int
+    var divisor = 1
     if (isPrime(n)) return listOf(n)
     while (number > 1) {
-        minDivisor = minDivisor(number)
-        simpleMultipliers.add(minDivisor)
-        number /= minDivisor
+        divisor++
+        while (number % divisor == 0) {
+            number /= divisor
+            simpleMultipliers.add(divisor)
+        }
     }
     return simpleMultipliers
 }
@@ -295,8 +297,8 @@ fun decimal(digits: List<Int>, base: Int): Int = polynom(digits.reversed(), base
 fun decimalFromString(str: String, base: Int): Int {
     var result = 0
     for (char in str) {
-        result = if (char in "0123456789") result * base + (char.toInt() - 48)
-        else result * base + (char.toInt() - 87)
+        result = result * base + if (char in "0123456789") char.toInt() - '0'.toInt()
+        else char.toInt() - 'a'.toInt() + 10
     }
     return (result)
 }
@@ -314,12 +316,12 @@ fun roman(n: Int): String {
     var stroke = ""
     val rAlphabet = listOf("M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I")
     val rAlphabetValues = listOf(1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1)
-    loop@ while (number > 0) {
+    while (number > 0) {
         for (i in rAlphabet.indices) {
             if (number >= rAlphabetValues[i]) {
                 number -= rAlphabetValues[i]
                 stroke += rAlphabet[i]
-                continue@loop
+                break
             }
         }
     }
