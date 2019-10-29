@@ -116,10 +116,6 @@ class Tests {
             buildGrades(mapOf("Марат" to 3, "Семён" to 3, "Михаил" to 3))
                 .mapValues { (_, v) -> v.sorted() }
         )
-        assertEquals(
-            mapOf(0 to listOf("")),
-            buildGrades(mapOf("" to 0))
-        )
     }
 
     @Test
