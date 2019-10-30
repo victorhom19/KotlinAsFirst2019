@@ -2,6 +2,8 @@
 
 package lesson5.task1
 
+import kotlin.math.min
+
 
 /**
  * Пример
@@ -96,7 +98,7 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
     for ((student, grade) in grades) {
         if (gradesList[grade] == null) gradesList[grade] = listOf(student)
         else {
-            val newValue = gradesList[grade] !!+ student
+            val newValue = gradesList[grade]!! + student
             gradesList[grade] = newValue
         }
     }
@@ -189,10 +191,14 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
  *     -> mapOf("MSFT" to 150.0, "NFLX" to 40.0)
  */
 fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
-    val result = mutableMapOf<String, Double>()
+    val priceList = mutableMapOf<String, Pair<Int, Double>>()
     for ((title, price) in stockPrices) {
-        if (result[title] == null) result[title] = price
-        else result[title] = (result[title]!! + price) / 2
+        if (priceList[title] == null) priceList[title] = 1 to price
+        else priceList[title] = priceList[title]!!.first + 1 to priceList[title]!!.second + price
+    }
+    val result = mutableMapOf<String, Double>()
+    for ((title, price) in priceList) {
+        result[title] = price.second / price.first
     }
     return result
 }
@@ -272,9 +278,8 @@ fun extractRepeats(list: List<String>): Map<String, Int> {
  *   hasAnagrams(listOf("тор", "свет", "рот")) -> true
  */
 fun hasAnagrams(words: List<String>): Boolean {
-    if (words.filter { it == "" }.size > 1) return true
     val wordsAlphabet = mutableListOf<Set<Char>>()
-    for (word in words.filter { it != "" }) {
+    for (word in words) {
         val alphabet = mutableSetOf<Char>()
         for (letter in word) {
             alphabet += letter
@@ -282,14 +287,9 @@ fun hasAnagrams(words: List<String>): Boolean {
         wordsAlphabet += alphabet
     }
     for (i in wordsAlphabet.indices) {
-        for (j in wordsAlphabet.indices) {
-            if (j > i) {
-                if (wordsAlphabet[i].containsAll(wordsAlphabet[j]) ||
-                    wordsAlphabet[j].containsAll(wordsAlphabet[i])
-                ) {
-                    return true
-                }
-            }
+        for (j in i + 1..wordsAlphabet.lastIndex) {
+            val minSize = min(wordsAlphabet[i].size, wordsAlphabet[j].size)
+            if (wordsAlphabet[i].intersect(wordsAlphabet[j]).size == minSize) return true
         }
     }
     return false
@@ -395,4 +395,4 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
  *     450
  *   ) -> emptySet()
  */
-fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Int = TODO()
+fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> = TODO()
