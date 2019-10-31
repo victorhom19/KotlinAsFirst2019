@@ -2,7 +2,6 @@
 
 package lesson5.task1
 
-import kotlin.math.min
 
 
 /**
@@ -288,8 +287,7 @@ fun hasAnagrams(words: List<String>): Boolean {
     }
     for (i in wordsAlphabet.indices) {
         for (j in i + 1..wordsAlphabet.lastIndex) {
-            val minSize = min(wordsAlphabet[i].size, wordsAlphabet[j].size)
-            if (wordsAlphabet[i].intersect(wordsAlphabet[j]).size == minSize) return true
+            if (wordsAlphabet[i] == wordsAlphabet[j]) return true
         }
     }
     return false

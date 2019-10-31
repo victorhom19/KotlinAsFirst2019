@@ -349,7 +349,7 @@ fun mostExpensive(description: String): String {
  * Вернуть -1, если roman не является корректным римским числом
  */
 fun fromRoman(roman: String): Int {
-    var stroke = 0
+    var stroke = -1
     var passedDouble = false
     for (i in 0 until roman.lastIndex + 1) {
         if (passedDouble) {
