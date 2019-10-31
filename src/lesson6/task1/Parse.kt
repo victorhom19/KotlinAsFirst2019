@@ -61,11 +61,9 @@ fun main() {
 }
 
 
-fun illegalSymbols(stroke: String, Alphabet: String): Boolean {
-    /*Функция определяет, есть ли "некорректные" символы в строке stroke,
-    т.е. такие, которые отличатся от допустимого алфавита Alphabet*/
+fun illegalSymbols(stroke: String, alphabet: String): Boolean {
     for (char in stroke) {
-        if (char !in Alphabet) return true
+        if (char !in alphabet) return true
     }
     return false
 }
@@ -83,8 +81,9 @@ fun illegalSymbols(stroke: String, Alphabet: String): Boolean {
  */
 fun dateStrToDigit(str: String): String {
     try {
-        val day = str.split(" ")[0].toInt()
-        val month = when (str.split(" ")[1]) {
+        val date = str.split(" ")
+        val day = date[0].toInt()
+        val month = when (date[1]) {
             "января" -> 1
             "февраля" -> 2
             "марта" -> 3
@@ -97,13 +96,12 @@ fun dateStrToDigit(str: String): String {
             "октября" -> 10
             "ноября" -> 11
             "декабря" -> 12
-            else -> -1
+            else -> return ""
         }
-        val year = str.split(" ")[2].toInt()
+        val year = date[2].toInt()
         return if (
             day > 0 && day <= daysInMonth(month, year) &&
-            year >= 0 &&
-            month > 0
+            year >= 0
         ) "${twoDigitStr(day)}.${twoDigitStr(month)}.$year"
         else ""
     } catch (e: Exception) {
@@ -123,8 +121,9 @@ fun dateStrToDigit(str: String): String {
  */
 fun dateDigitToStr(digital: String): String {
     try {
-        val day = digital.split(".")[0].toInt()
-        val month = when (digital.split(".")[1].toInt()) {
+        val date = digital.split(".")
+        val day = date[0].toInt()
+        val month = when (date[1].toInt()) {
             1 -> "января"
             2 -> "февраля"
             3 -> "марта"
@@ -137,14 +136,13 @@ fun dateDigitToStr(digital: String): String {
             10 -> "октября"
             11 -> "ноября"
             12 -> "декабря"
-            else -> "invalid"
+            else -> return ""
         }
-        val year = digital.split(".")[2].toInt()
+        val year = date[2].toInt()
         return if (
             digital.split(".").size == 3 &&
             day > 0 && day <= daysInMonth(digital.split(".")[1].toInt(), year) &&
-            year >= 0 &&
-            month != "invalid"
+            year >= 0
         ) "$day $month $year"
         else ""
     } catch (e: Exception) {
@@ -167,25 +165,9 @@ fun dateDigitToStr(digital: String): String {
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
 fun flattenPhoneNumber(phone: String): String {
-    val notRepeatable = mutableMapOf('+' to 0, '(' to 0, ')' to 0)
-    val newPhone = phone.filter { it != ' ' && it != '-' }
-    if (illegalSymbols(newPhone, "0123456789+()")) return ""
-    for (char in newPhone) {
-        when {
-            newPhone.filter { it !in "+()" } == "" -> return ""
-            //Проверка на повторяющиеся знаки + ( )
-            char in listOf('+', '(', ')') -> {
-                if (notRepeatable[char]!! == 1) return ""
-                notRepeatable[char] = 1
-            }
-            //Проверка на неверное расположение открывающей и закрывающей скобки
-            newPhone.indexOf(')') < phone.indexOf('(') -> return ""
-            //Проверка на неверное расположение знака +
-            '+' in newPhone && newPhone.indexOf('+') != 0 -> return ""
-            newPhone.indexOf('(') == phone.indexOf(')') - 2 -> return ""
-        }
-    }
-    return (newPhone.filter { it != '(' && it != ')' })
+    if (phone.filter { it !in " -" }.matches(Regex("""(\+([0-9])+)?(\(([0-9])+\))?([0-9])+""")))
+        return phone.filter { it !in " -()" }
+    return ""
 }
 
 /**
@@ -224,25 +206,16 @@ fun bestLongJump(jumps: String): Int {
  * вернуть -1.
  */
 fun bestHighJump(jumps: String): Int {
-    var newJumps = ""
-    var counter = 0
-    var maxJump = -1
-    for (char in jumps) {
-        when (char) {
-            in "0123456789+%-" -> newJumps += char
-            ' ' -> {
-                newJumps += if (counter % 2 == 0) char
-                else '/'
-                counter++
-            }
-            else -> return -1
+    return try {
+        val sJumps = jumps.split(" ")
+        var maxJump = -1
+        for (i in sJumps.indices step 2) {
+            if (sJumps[i].toInt() > maxJump && '+' in sJumps[i + 1]) maxJump = sJumps[i].toInt()
         }
+        maxJump
+    } catch (e: Exception) {
+        return -1
     }
-    for (element in newJumps.split('/')) {
-        val attempt = element.split(' ')
-        if (attempt[0].toInt() > maxJump && '+' in attempt[1]) maxJump = attempt[0].toInt()
-    }
-    return maxJump
 }
 
 /**
@@ -256,11 +229,10 @@ fun bestHighJump(jumps: String): Int {
  */
 fun plusMinus(expression: String): Int {
     if (illegalSymbols(expression, "0123456789-+ ")) throw (IllegalArgumentException())
-    for (element in expression.split(' ')) {
+    for (i in expression.split(' ').indices) {
         var hasChar = false
         var hasNumber = false
-        //Исключение расположения и символа и числа как единого слагаемого
-        for (char in element) {
+        for (char in expression.split(' ')[i]) {
             if (char in "+-") {
                 hasChar = true
             }
@@ -269,10 +241,10 @@ fun plusMinus(expression: String): Int {
             }
             if (hasChar && hasNumber) throw (IllegalArgumentException())
         }
-        if (element in "+-") {
-            if (expression.split(' ').indexOf(element) % 2 != 1) throw (IllegalArgumentException())
+        if (expression.split(' ')[i] in "+-") {
+            if (i % 2 != 1) throw (IllegalArgumentException())
         } else {
-            if (expression.split(' ').indexOf(element) % 2 != 0) throw (IllegalArgumentException())
+            if (i % 2 != 0) throw (IllegalArgumentException())
         }
     }
     var result = 0
@@ -349,15 +321,15 @@ fun mostExpensive(description: String): String {
  * Вернуть -1, если roman не является корректным римским числом
  */
 fun fromRoman(roman: String): Int {
-    var stroke = -1
+    var stroke = 0
     var passedDouble = false
     for (i in 0 until roman.lastIndex + 1) {
         if (passedDouble) {
             passedDouble = false
             continue
         }
-        if (roman.length != i+1 && roman[i] + roman[i+1].toString() in listOf("IV", "IX", "XL", "XC", "CD", "CM")) {
-            stroke += when (roman[i] + roman[i+1].toString()) {
+        if (roman.length != i + 1 && roman[i] + roman[i + 1].toString() in listOf("IV", "IX", "XL", "XC", "CD", "CM")) {
+            stroke += when (roman[i] + roman[i + 1].toString()) {
                 "IV" -> 4
                 "IX" -> 9
                 "XL" -> 40
@@ -367,8 +339,7 @@ fun fromRoman(roman: String): Int {
                 else -> -1
             }
             passedDouble = true
-        }
-        else {
+        } else {
             stroke += when (roman[i]) {
                 'I' -> 1
                 'V' -> 5
