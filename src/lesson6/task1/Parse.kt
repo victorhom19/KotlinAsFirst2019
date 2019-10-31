@@ -352,7 +352,7 @@ fun fromRoman(roman: String): Int {
             }
         }
     }
-    return stroke
+    return if(stroke == 0) -1 else stroke
 }
 
 /**
