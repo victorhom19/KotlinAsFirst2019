@@ -140,8 +140,8 @@ fun dateDigitToStr(digital: String): String {
         }
         val year = date[2].toInt()
         return if (
-            digital.split(".").size == 3 &&
-            day > 0 && day <= daysInMonth(digital.split(".")[1].toInt(), year) &&
+            date.size == 3 &&
+            day > 0 && day <= daysInMonth(date[1].toInt(), year) &&
             year >= 0
         ) "$day $month $year"
         else ""
@@ -165,7 +165,7 @@ fun dateDigitToStr(digital: String): String {
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
 fun flattenPhoneNumber(phone: String): String {
-    if (phone.filter { it !in " -" }.matches(Regex("""(\+([0-9])+)?(\(([0-9])+\))?([0-9])+""")))
+    if (phone.filter { it !in " -" }.matches(Regex("""(\+\d+)?(\(\d+\))?\d+""")))
         return phone.filter { it !in " -()" }
     return ""
 }
@@ -228,35 +228,15 @@ fun bestHighJump(jumps: String): Int {
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
 fun plusMinus(expression: String): Int {
-    if (illegalSymbols(expression, "0123456789-+ ")) throw (IllegalArgumentException())
-    for (i in expression.split(' ').indices) {
-        var hasChar = false
-        var hasNumber = false
-        for (char in expression.split(' ')[i]) {
-            if (char in "+-") {
-                hasChar = true
-            }
-            if (char in "0123456789") {
-                hasNumber = true
-            }
-            if (hasChar && hasNumber) throw (IllegalArgumentException())
+    if (expression.matches(Regex("""\d+( ([+\-]) \d+)*"""))) {
+        val stroke = expression.split(' ')
+        var result = stroke[0].toInt()
+        for (i in 2..stroke.lastIndex step 2) {
+            if (stroke[i - 1] == "+") result += stroke[i].toInt()
+            else result -= stroke[i].toInt()
         }
-        if (expression.split(' ')[i] in "+-") {
-            if (i % 2 != 1) throw (IllegalArgumentException())
-        } else {
-            if (i % 2 != 0) throw (IllegalArgumentException())
-        }
-    }
-    var result = 0
-    var multiplier = 1
-    for (element in expression.split(' ')) {
-        when (element) {
-            "+" -> multiplier = 1
-            "-" -> multiplier = -1
-            else -> result += multiplier * element.toInt()
-        }
-    }
-    return result
+        return result
+    } else throw (IllegalArgumentException())
 }
 
 /**
@@ -295,7 +275,7 @@ fun firstDuplicateIndex(str: String): Int {
  * Все цены должны быть больше либо равны нуля.
  */
 fun mostExpensive(description: String): String {
-    var maxPrice = 0.0 to ""
+    var maxPrice = -1.0 to ""
     for (product in description.split("; ")) {
         if (product == "") return ""
         val title = product.split(' ')[0]
@@ -352,7 +332,7 @@ fun fromRoman(roman: String): Int {
             }
         }
     }
-    return if(stroke == 0) -1 else stroke
+    return if (stroke == 0) -1 else stroke
 }
 
 /**
