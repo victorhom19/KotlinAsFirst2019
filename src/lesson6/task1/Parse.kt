@@ -286,7 +286,7 @@ fun mostExpensive(description: String): String {
         ) return ""
         if (price.toDouble() > maxPrice.first) maxPrice = price.toDouble() to title
     }
-    return maxPrice.second.capitalize()
+    return maxPrice.second
 }
 
 /**
