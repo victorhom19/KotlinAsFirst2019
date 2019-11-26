@@ -57,12 +57,13 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
     val text = File(inputName).readText()
     val result = mutableMapOf<String, Int>()
     for (string in substrings) {
-        var a = text.substring(0, string.length)
+        var dynString = text.substring(0, string.length)
         result[string] = 0
-        for (char in text.substring(string.length + 1)) {
-            a = a.substring(1) + char
-            if (a.equals(string, true)) result[string] = result[string] !!+ 1
+        for (char in text.substring(string.length)) {
+            if (dynString.equals(string, true)) result[string] = result[string]!! + 1
+            dynString = dynString.substring(1) + char
         }
+        if (dynString.equals(string, true)) result[string] = result[string]!! + 1
     }
     return result
 }
@@ -86,14 +87,17 @@ fun sibilants(inputName: String, outputName: String) {
     var prevChar = ' '
     for (char in File(inputName).readText()) {
         if ((prevChar in "жчшщЖЧШЩ") && (char in "ыяюЫЯЮ")) {
-            when (char) {
-                'ы' -> outputStream.write("и")
-                'я' -> outputStream.write("а")
-                'ю' -> outputStream.write("у")
-                'Ы' -> outputStream.write("И")
-                'Я' -> outputStream.write("А")
-                'Ю' -> outputStream.write("У")
-            }
+            outputStream.write(
+                when (char) {
+                    'ы' -> "и"
+                    'я' -> "а"
+                    'ю' -> "у"
+                    'Ы' -> "И"
+                    'Я' -> "А"
+                    'Ю' -> "У"
+                    else -> ""
+                }
+            )
         } else {
             outputStream.write(char.toString())
         }
@@ -120,7 +124,18 @@ fun sibilants(inputName: String, outputName: String) {
  *
  */
 fun centerFile(inputName: String, outputName: String) {
-    TODO()
+    val outputStream = File(outputName).bufferedWriter()
+    val text = mutableListOf<String>()
+    var mxLength = 0
+    for (line in File(inputName).readLines()) {
+        text.add(line.trim())
+        if (line.trim().length > mxLength) mxLength = line.length
+    }
+    for (line in text) {
+        for (i in 1..(mxLength - line.length) / 2) outputStream.write(" ")
+        outputStream.write(line + '\n')
+    }
+    outputStream.close()
 }
 
 /**
@@ -151,7 +166,35 @@ fun centerFile(inputName: String, outputName: String) {
  * 8) Если входной файл удовлетворяет требованиям 1-7, то он должен быть в точности идентичен выходному файлу
  */
 fun alignFileByWidth(inputName: String, outputName: String) {
-    TODO()
+    val outputStream = File(outputName).bufferedWriter()
+    val text = mutableListOf<String>()
+    var mxLength = 0
+    var newLine: String
+    for (line in File(inputName).readLines()) {
+        newLine = line.trim().split(" +".toRegex()).filter { it != "" }.joinToString(" ")
+        text.add(newLine)
+        if (newLine.length > mxLength) mxLength = newLine.length
+    }
+    for (line in text) {
+        val words = line.split(" ")
+        outputStream.write(words[0])
+        if (words.size != 1) {
+            val spaceLength = ((mxLength - line.length) / (words.size - 1)) + 1
+            var bSpacesCounter = ((mxLength - line.length + words.size - 1) % (words.size - 1))
+            for (word in words.subList(1, words.lastIndex + 1)) {
+                if (bSpacesCounter > 0) {
+                    for (i in 1..spaceLength + 1) outputStream.write(" ")
+                    outputStream.write(word)
+                    bSpacesCounter--
+                } else {
+                    for (i in 1..spaceLength) outputStream.write(" ")
+                    outputStream.write(word)
+                }
+            }
+        }
+        outputStream.write("\n")
+    }
+    outputStream.close()
 }
 
 /**
