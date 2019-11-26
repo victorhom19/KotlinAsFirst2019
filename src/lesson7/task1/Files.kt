@@ -215,7 +215,21 @@ fun alignFileByWidth(inputName: String, outputName: String) {
  * Ключи в ассоциативном массиве должны быть в нижнем регистре.
  *
  */
-fun top20Words(inputName: String): Map<String, Int> = TODO()
+fun top20Words(inputName: String): Map<String, Int> {
+    val wordsTable = mutableMapOf<String, Int>()
+    for (line in File(inputName).readLines()) {
+        for (word in Regex("""[^a-zA-Zа-яА-ЯёЁ]""").split(line).filter { it != "" }) {
+            if (wordsTable.containsKey(word.toLowerCase())) {
+                wordsTable[word.toLowerCase()] = wordsTable[word.toLowerCase()]!!.plus(1)
+            } else {
+                wordsTable[word.toLowerCase()] = 1
+            }
+        }
+    }
+    val result = wordsTable.toList().sortedBy { (key, value) -> value }.reversed()
+    return if (result.size < 20) result.toMap()
+    else result.subList(0, 20).toMap()
+}
 
 /**
  * Средняя
@@ -253,7 +267,23 @@ fun top20Words(inputName: String): Map<String, Int> = TODO()
  * Обратите внимание: данная функция не имеет возвращаемого значения
  */
 fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: String) {
-    TODO()
+    val outputStream = File(outputName).bufferedWriter()
+    for (char in File(inputName).readText()) {
+        var keyExists = false
+        var rKey = ' '
+        for (key in dictionary.keys) {
+            if (key.toLowerCase() == char.toLowerCase()) {
+                rKey = key
+                keyExists = true
+                break
+            }
+        }
+        if (keyExists) {
+            if (char.isUpperCase()) outputStream.write(dictionary[rKey]!!.toLowerCase().capitalize())
+            else outputStream.write(dictionary[rKey]!!.toLowerCase())
+        } else outputStream.write(char.toString())
+    }
+    outputStream.close()
 }
 
 /**
@@ -281,7 +311,31 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
  * Обратите внимание: данная функция не имеет возвращаемого значения
  */
 fun chooseLongestChaoticWord(inputName: String, outputName: String) {
-    TODO()
+    val outputStream = File(outputName).bufferedWriter()
+    val result = mutableListOf<String>()
+    var mxLength = 0
+    for (line in File(inputName).readLines()) {
+        val word = line.filter { it != '\n' }
+        val wordChars = mutableSetOf<Char>()
+        var hasDiffChars = true
+        for (char in word.toLowerCase()) {
+            if (wordChars.contains(char)) {
+                hasDiffChars = false
+                break
+            } else {
+                wordChars.add(char)
+            }
+        }
+        if (hasDiffChars && word.length >= mxLength) {
+            if (word.length > mxLength) {
+                result.clear()
+                mxLength = word.length
+            }
+            result.add(word)
+        }
+    }
+    outputStream.write(result.joinToString(", "))
+    outputStream.close()
 }
 
 /**
