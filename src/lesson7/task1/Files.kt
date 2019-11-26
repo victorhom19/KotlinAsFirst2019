@@ -132,7 +132,7 @@ fun centerFile(inputName: String, outputName: String) {
         if (line.trim().length > mxLength) mxLength = line.length
     }
     for (line in text) {
-        for (i in 1..(mxLength - line.length) / 2) outputStream.write(" ")
+        for (i in 1..(mxLength - line.length ) / 2) outputStream.write(" ")
         outputStream.write(line + '\n')
     }
     outputStream.close()
@@ -226,7 +226,7 @@ fun top20Words(inputName: String): Map<String, Int> {
             }
         }
     }
-    val result = wordsTable.toList().sortedBy { (key, value) -> value }.reversed()
+    val result = wordsTable.toList().sortedBy { (_, value) -> value }.reversed()
     return if (result.size < 20) result.toMap()
     else result.subList(0, 20).toMap()
 }
@@ -279,8 +279,8 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
             }
         }
         if (keyExists) {
-            if (char.isUpperCase()) outputStream.write(dictionary[rKey]!!.toLowerCase().capitalize())
-            else outputStream.write(dictionary[rKey]!!.toLowerCase())
+            if (char.isUpperCase()) outputStream.write((dictionary[rKey] ?: error("")).toLowerCase().capitalize())
+            else outputStream.write((dictionary[rKey] ?: error("")).toLowerCase())
         } else outputStream.write(char.toString())
     }
     outputStream.close()
@@ -384,7 +384,69 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
-    TODO()
+    val outputStream = File(outputName).bufferedWriter()
+    outputStream.write("<html>\n")
+    outputStream.write("<body>\n")
+    outputStream.write("<p>\n")
+    for (line in File(inputName).readLines()) {
+        if (line == "") outputStream.write("</p>\n<p>\n")
+        if (line.isNotEmpty()) {
+            var dynString = "   "
+            var bClosed = true
+            var iClosed = true
+            var sClosed = true
+            var bCoolDown = false
+            var newLine = ""
+            for (char in "$line ") {
+                dynString = dynString[1].toString() + dynString[2] + char
+                if (dynString.matches(Regex("""\*\*\*"""))) {
+                    if (bClosed && iClosed) {
+                        newLine += ("<b><i>")
+                        bClosed = false
+                        iClosed = false
+                    } else {
+                        newLine += ("</b></i>")
+                        bClosed = true
+                        iClosed = true
+                    }
+                    bCoolDown = true
+                } else if (dynString.matches(Regex("""\*\*."""))) {
+                    if (bCoolDown) bCoolDown = false
+                    else {
+                        bClosed = if (bClosed) {
+                            newLine += ("<b>")
+                            false
+                        } else {
+                            newLine += ("</b>")
+                            true
+                        }
+                    }
+                } else if (dynString.matches(Regex("""[^*]\*[^*]"""))) {
+                    iClosed = if (iClosed) {
+                        newLine += ("<i>")
+                        false
+                    } else {
+                        newLine += ("</i>")
+                        true
+                    }
+                } else if (dynString.matches(Regex("""~~."""))) {
+                    sClosed = if (sClosed) {
+                        newLine += ("<s>")
+                        false
+                    } else {
+                        newLine += ("</s>")
+                        true
+                    }
+                }
+                if (char !in "*~") newLine += (char.toString())
+            }
+            outputStream.write(newLine)
+        }
+    }
+    outputStream.write("</p>\n")
+    outputStream.write("</body>\n")
+    outputStream.write("</html>\n")
+    outputStream.close()
 }
 
 /**
