@@ -132,7 +132,7 @@ fun centerFile(inputName: String, outputName: String) {
         if (line.trim().length > mxLength) mxLength = line.length
     }
     for (line in text) {
-        for (i in 1..(mxLength - line.length ) / 2) outputStream.write(" ")
+        for (i in 1..(mxLength - line.length) / 2) outputStream.write(" ")
         outputStream.write(line + '\n')
     }
     outputStream.close()
@@ -385,67 +385,59 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
  */
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
     val outputStream = File(outputName).bufferedWriter()
-    outputStream.write("<html>\n")
-    outputStream.write("<body>\n")
-    outputStream.write("<p>\n")
-    for (line in File(inputName).readLines()) {
-        if (line == "") outputStream.write("</p>\n<p>\n")
-        if (line.isNotEmpty()) {
-            var dynString = "   "
-            var bClosed = true
-            var iClosed = true
-            var sClosed = true
-            var bCoolDown = false
-            var newLine = ""
-            for (char in "$line ") {
-                dynString = dynString[1].toString() + dynString[2] + char
-                if (dynString.matches(Regex("""\*\*\*"""))) {
-                    if (bClosed && iClosed) {
-                        newLine += ("<b><i>")
-                        bClosed = false
-                        iClosed = false
-                    } else {
-                        newLine += ("</b></i>")
-                        bClosed = true
-                        iClosed = true
-                    }
-                    bCoolDown = true
-                } else if (dynString.matches(Regex("""\*\*."""))) {
-                    if (bCoolDown) bCoolDown = false
-                    else {
-                        bClosed = if (bClosed) {
-                            newLine += ("<b>")
-                            false
-                        } else {
-                            newLine += ("</b>")
-                            true
-                        }
-                    }
-                } else if (dynString.matches(Regex("""[^*]\*[^*]"""))) {
-                    iClosed = if (iClosed) {
-                        newLine += ("<i>")
-                        false
-                    } else {
-                        newLine += ("</i>")
-                        true
-                    }
-                } else if (dynString.matches(Regex("""~~."""))) {
-                    sClosed = if (sClosed) {
-                        newLine += ("<s>")
-                        false
-                    } else {
-                        newLine += ("</s>")
-                        true
-                    }
-                }
-                if (char !in "*~") newLine += (char.toString())
+    var text = File(inputName).readText().replace(Regex("\r?\n[\r\n]+"), "</p><p>")
+    outputStream.write("<html>\n<body>\n<p>\n")
+    var dynString = "   "
+    var iClosed = true
+    var bClosed = true
+    var sClosed = true
+    var bCoolDown = false
+    for (char in "$text ") {
+        dynString = dynString[1].toString() + dynString[2] + char
+        if (dynString.matches(Regex("""\*\*\*"""))) {
+            if (iClosed) {
+                outputStream.write("<b><i>")
+                iClosed = false
+                bClosed = false
+            } else {
+                outputStream.write("</b></i>")
+                iClosed = true
+                bClosed = true
             }
-            outputStream.write(newLine)
+            bCoolDown = true
         }
+        else if (dynString.matches(Regex("""[^*]\*[^*]"""))) {
+            iClosed = if (iClosed) {
+                outputStream.write("<i>")
+                false
+            } else {
+                outputStream.write("</i>")
+                true
+            }
+        }
+
+        else if (dynString.matches(Regex("""\*\*.""")) && !bCoolDown) {
+            bClosed = if (bClosed) {
+                outputStream.write("<b>")
+                false
+            } else {
+                outputStream.write("</b>")
+                true
+            }
+        }
+
+        else if (dynString.matches(Regex("""~~."""))) {
+            sClosed = if (sClosed) {
+                outputStream.write("<s>")
+                false
+            } else {
+                outputStream.write("</s>")
+                true
+            }
+        }
+        if (char !in "*~") outputStream.write(char.toString())
     }
-    outputStream.write("</p>\n")
-    outputStream.write("</body>\n")
-    outputStream.write("</html>\n")
+    outputStream.write("</p>\n</body>\n</html>")
     outputStream.close()
 }
 
