@@ -132,8 +132,7 @@ fun centerFile(inputName: String, outputName: String) {
         if (line.trim().length > mxLength) mxLength = line.length
     }
     for (line in text) {
-        for (i in 1..(mxLength - line.length) / 2) outputStream.write(" ")
-        outputStream.write(line + '\n')
+        outputStream.write(" ".repeat((mxLength - line.length) / 2) + line + '\n')
     }
     outputStream.close()
 }
@@ -183,12 +182,10 @@ fun alignFileByWidth(inputName: String, outputName: String) {
             var bSpacesCounter = ((mxLength - line.length + words.size - 1) % (words.size - 1))
             for (word in words.subList(1, words.lastIndex + 1)) {
                 if (bSpacesCounter > 0) {
-                    for (i in 1..spaceLength + 1) outputStream.write(" ")
-                    outputStream.write(word)
+                    outputStream.write(" ".repeat(spaceLength + 1) + word)
                     bSpacesCounter--
                 } else {
-                    for (i in 1..spaceLength) outputStream.write(" ")
-                    outputStream.write(word)
+                    outputStream.write(" ".repeat(spaceLength) + word)
                 }
             }
         }
@@ -385,7 +382,7 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
  */
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
     val outputStream = File(outputName).bufferedWriter()
-    var text = File(inputName).readText()
+    val text = File(inputName).readText()
     outputStream.write("<html>\n<body>\n<p>\n")
     var result = ""
     var dynString = "   "
@@ -406,8 +403,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                 bClosed = true
             }
             bCoolDown = true
-        }
-        else if (dynString.matches(Regex("""[^*]\*[^*]"""))) {
+        } else if (dynString.matches(Regex("""[^*]\*[^*]"""))) {
             iClosed = if (iClosed) {
                 result += ("<i>")
                 false
@@ -415,9 +411,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                 result += ("</i>")
                 true
             }
-        }
-
-        else if (dynString.matches(Regex("""\*\*.""")) && !bCoolDown) {
+        } else if (dynString.matches(Regex("""\*\*.""")) && !bCoolDown) {
             bClosed = if (bClosed) {
                 result += ("<b>")
                 false
@@ -425,9 +419,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                 result += ("</b>")
                 true
             }
-        }
-
-        else if (dynString.matches(Regex("""~~."""))) {
+        } else if (dynString.matches(Regex("""~~."""))) {
             sClosed = if (sClosed) {
                 result += ("<s>")
                 false
@@ -438,6 +430,9 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
         }
         if (char !in "*~") result += (char)
     }
+    if (!(sClosed)) result = result.reversed().replaceFirst("<s>", "~~").reversed()
+    if (!(sClosed)) result = result.reversed().replaceFirst("<b>", "**").reversed()
+    if (!(sClosed)) result = result.reversed().replaceFirst("<i>", "*").reversed()
     outputStream.write(result.replace(Regex("""\r?\n(\r?\n)+"""), "</p><p>"))
     outputStream.write("</p>\n</body>\n</html>")
     outputStream.close()
@@ -584,7 +579,23 @@ fun markdownToHtml(inputName: String, outputName: String) {
  *
  */
 fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
-    TODO()
+    val outputStream = File(outputName).bufferedWriter()
+    var number = rhv
+    val sList = mutableListOf<Int>()
+    while (number > 0) {
+        sList.add(lhv * (number % 10))
+        number /= 10
+    }
+    val strokeLength = (lhv * rhv).toString().length + 1
+    outputStream.write(" ".repeat(strokeLength - lhv.toString().length) + "$lhv\n")
+    outputStream.write("*" + " ".repeat(strokeLength - rhv.toString().length - 1) + "$rhv\n")
+    outputStream.write("-".repeat(strokeLength) + "\n")
+    outputStream.write(" ".repeat(strokeLength - sList[0].toString().length) + sList[0].toString() + "\n")
+    for ((i, addend) in sList.subList(1, sList.lastIndex + 1).withIndex()) {
+        outputStream.write("+" + " ".repeat(strokeLength - addend.toString().length - i - 2) + "$addend\n")
+    }
+    outputStream.write("-".repeat(strokeLength) + "\n" + " " + (rhv * lhv).toString())
+    outputStream.close()
 }
 
 
