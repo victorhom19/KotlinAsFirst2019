@@ -2,7 +2,6 @@
 
 package lesson7.task1
 
-import lesson3.task1.digitNumber
 import java.io.File
 
 /**
@@ -169,9 +168,8 @@ fun alignFileByWidth(inputName: String, outputName: String) {
     val outputStream = File(outputName).bufferedWriter()
     val text = mutableListOf<String>()
     var mxLength = 0
-    var newLine: String
     for (line in File(inputName).readLines()) {
-        newLine = line.trim().split(" +".toRegex()).filter { it != "" }.joinToString(" ")
+        val newLine = line.trim().split(" +".toRegex()).filter { it != "" }.joinToString(" ")
         text.add(newLine)
         if (newLine.length > mxLength) mxLength = newLine.length
     }
