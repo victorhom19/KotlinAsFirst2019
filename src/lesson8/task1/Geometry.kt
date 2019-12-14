@@ -3,10 +3,9 @@
 package lesson8.task1
 
 import lesson1.task1.sqr
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.math.sqrt
+import java.lang.Exception
+import java.lang.IllegalArgumentException
+import kotlin.math.*
 
 /**
  * Точка на плоскости
@@ -79,14 +78,17 @@ data class Circle(val center: Point, val radius: Double) {
      * расстояние между их центрами минус сумма их радиусов.
      * Расстояние между пересекающимися окружностями считать равным 0.0.
      */
-    fun distance(other: Circle): Double = TODO()
+    fun distance(other: Circle): Double {
+        val circleDistance = center.distance(other.center) - radius - other.radius
+        return if (circleDistance < 0) 0.0 else circleDistance
+    }
 
     /**
      * Тривиальная
      *
      * Вернуть true, если и только если окружность содержит данную точку НА себе или ВНУТРИ себя
      */
-    fun contains(p: Point): Boolean = TODO()
+    fun contains(p: Point): Boolean = (p.x - center.x).pow(2) + (p.y - center.y).pow(2) <= radius.pow(2)
 }
 
 /**
@@ -106,7 +108,20 @@ data class Segment(val begin: Point, val end: Point) {
  * Дано множество точек. Вернуть отрезок, соединяющий две наиболее удалённые из них.
  * Если в множестве менее двух точек, бросить IllegalArgumentException
  */
-fun diameter(vararg points: Point): Segment = TODO()
+fun diameter(vararg points: Point): Segment {
+    var max = 0.0
+    var mxPoints = Point(0.0, 0.0) to Point(0.0, 0.0)
+    for (i in points.indices) {
+        for (j in i + 1..points.lastIndex) {
+            if (max < points[i].distance(points[j])) {
+                max = points[i].distance(points[j])
+                mxPoints = points[i] to points[j]
+            }
+        }
+    }
+    if (max == 0.0) throw (IllegalArgumentException())
+    return Segment(mxPoints.first, mxPoints.second)
+}
 
 /**
  * Простая
@@ -114,7 +129,14 @@ fun diameter(vararg points: Point): Segment = TODO()
  * Построить окружность по её диаметру, заданному двумя точками
  * Центр её должен находиться посередине между точками, а радиус составлять половину расстояния между ними
  */
-fun circleByDiameter(diameter: Segment): Circle = TODO()
+fun circleByDiameter(diameter: Segment): Circle =
+    Circle(
+        Point(
+            (max(diameter.end.x, diameter.begin.x) - min(diameter.end.x, diameter.begin.x)) / 2,
+            (max(diameter.end.y, diameter.begin.y) - min(diameter.end.y, diameter.begin.y)) / 2
+        ),
+        diameter.begin.distance(diameter.end) / 2
+    )
 
 /**
  * Прямая, заданная точкой point и углом наклона angle (в радианах) по отношению к оси X.
@@ -122,12 +144,13 @@ fun circleByDiameter(diameter: Segment): Circle = TODO()
  * или: y * cos(angle) = x * sin(angle) + b, где b = point.y * cos(angle) - point.x * sin(angle).
  * Угол наклона обязан находиться в диапазоне от 0 (включительно) до PI (исключительно).
  */
-class Line private constructor(val b: Double, val angle: Double) {
+class Line private constructor(val b: Double, val angle: Double, private val px: Double) {
     init {
         require(angle >= 0 && angle < PI) { "Incorrect line angle: $angle" }
     }
 
-    constructor(point: Point, angle: Double) : this(point.y * cos(angle) - point.x * sin(angle), angle)
+    constructor(point: Point, angle: Double) :
+            this(point.y * cos(angle) - point.x * sin(angle), angle, point.x)
 
     /**
      * Средняя
@@ -135,7 +158,33 @@ class Line private constructor(val b: Double, val angle: Double) {
      * Найти точку пересечения с другой линией.
      * Для этого необходимо составить и решить систему из двух уравнений (каждое для своей прямой)
      */
-    fun crossPoint(other: Line): Point = TODO()
+    fun crossPoint(other: Line): Point {
+        val crossX: Double
+        val crossY: Double
+        when {
+            angle == PI / 2 && other.angle == PI / 2 -> throw (Exception("Can't find cross point: lines are parallel"))
+            angle == PI / 2 || other.angle == PI / 2 -> {
+                crossY = if (angle == PI / 2) {
+                    crossX = px
+                    crossX * sin(other.angle) / cos(other.angle) + other.b / cos(other.angle)
+                } else {
+                    crossX = other.px
+                    crossX * sin(angle) / cos(other.angle) + other.b / cos(other.angle)
+                }
+            }
+            else -> {
+                val tgA = sin(angle) / cos(angle)
+                val tgB = sin(other.angle) / cos(other.angle)
+                if (tgA == tgB)
+                    throw (Exception("Can't find cross point: lines are parallel"))
+                else {
+                    crossX = ((other.b / cos(other.angle) - b / cos(angle)) / (tgA - tgB))
+                    crossY = tgA * crossX + b / cos(angle)
+                }
+            }
+        }
+        return (Point(crossX, crossY))
+    }
 
     override fun equals(other: Any?) = other is Line && angle == other.angle && b == other.b
 
@@ -153,14 +202,35 @@ class Line private constructor(val b: Double, val angle: Double) {
  *
  * Построить прямую по отрезку
  */
-fun lineBySegment(s: Segment): Line = TODO()
+fun arctg(x: Double, eps: Double): Double {
+    var factorialCounter = 3
+    val number = (x % (2 * PI)).pow(2)
+    var result = 0.0
+    var newMember = x % (2 * PI)
+    while (abs(newMember) >= eps) {
+        result += newMember
+        newMember = -1.0 * newMember * number * (factorialCounter - 2) / factorialCounter
+        factorialCounter += 2
+    }
+    result += newMember
+    return if (result >= 0) result else (result + PI)
+}
+fun lineBySegment(s: Segment): Line {
+    val angle = arctg((s.end.y - s.begin.y) / (s.end.x - s.begin.x), 1e-8)
+    val angleMultiplier = floor(arctg((s.end.y - s.begin.y) / (s.end.x - s.begin.x), 1e-8) / PI)
+    return when {
+        s.end.x - s.begin.x == 0.0 -> Line(s.begin, PI / 2)
+        angleMultiplier == 0.0 -> Line(s.begin, angle)
+        else -> Line(s.begin, PI / angleMultiplier)
+    }
+}
 
 /**
  * Средняя
  *
  * Построить прямую по двум точкам
  */
-fun lineByPoints(a: Point, b: Point): Line = TODO()
+fun lineByPoints(a: Point, b: Point): Line = lineBySegment(Segment(a, b))
 
 /**
  * Сложная

@@ -2,6 +2,7 @@
 
 package lesson7.task1
 
+import lesson3.task1.digitNumber
 import java.io.File
 
 /**
@@ -216,11 +217,7 @@ fun top20Words(inputName: String): Map<String, Int> {
     val wordsTable = mutableMapOf<String, Int>()
     for (line in File(inputName).readLines()) {
         for (word in Regex("""[^a-zA-Zа-яА-ЯёЁ]""").split(line).filter { it != "" }) {
-            if (wordsTable.containsKey(word.toLowerCase())) {
-                wordsTable[word.toLowerCase()] = wordsTable[word.toLowerCase()]!!.plus(1)
-            } else {
-                wordsTable[word.toLowerCase()] = 1
-            }
+            wordsTable[word.toLowerCase()] = wordsTable.getOrPut(word.toLowerCase(), { 0 }) + 1
         }
     }
     val result = wordsTable.toList().sortedBy { (_, value) -> value }.reversed()
@@ -538,7 +535,6 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlLists(inputName: String, outputName: String) {
-    TODO()
 }
 
 /**
@@ -619,7 +615,5 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
  * Используемые пробелы, отступы и дефисы должны в точности соответствовать примеру.
  *
  */
-fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
-    TODO()
-}
+fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {}
 
