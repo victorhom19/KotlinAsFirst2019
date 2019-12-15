@@ -132,8 +132,8 @@ fun diameter(vararg points: Point): Segment {
 fun circleByDiameter(diameter: Segment): Circle =
     Circle(
         Point(
-            (max(diameter.end.x, diameter.begin.x) - min(diameter.end.x, diameter.begin.x)) / 2,
-            (max(diameter.end.y, diameter.begin.y) - min(diameter.end.y, diameter.begin.y)) / 2
+            (diameter.begin.x + diameter.end.x) / 2,
+            (diameter.begin.y + diameter.end.y) / 2
         ),
         diameter.begin.distance(diameter.end) / 2
     )

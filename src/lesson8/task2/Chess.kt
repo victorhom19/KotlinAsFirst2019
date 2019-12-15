@@ -40,7 +40,7 @@ data class Square(val column: Int, val row: Int) {
 fun square(notation: String): Square {
     if (notation.length == 2 && Square(notation[0] - 'a' + 1, notation[1] - '1' + 1).inside())
         return Square(notation[0] - 'a' + 1, notation[1] - '1' + 1)
-    else throw (Exception(IllegalArgumentException()))
+    else throw (Exception(IllegalArgumentException("null")))
 }
 
 /**
@@ -72,7 +72,7 @@ fun rookMoveNumber(start: Square, end: Square): Int {
         else if (start.column == end.column || start.row == end.row) 1
         else 2
     } else {
-        throw (Exception(IllegalArgumentException()))
+        throw (Exception(IllegalArgumentException("null")))
     }
 }
 
