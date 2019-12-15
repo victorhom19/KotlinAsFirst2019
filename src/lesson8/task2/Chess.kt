@@ -2,8 +2,12 @@
 
 package lesson8.task2
 
+import lesson8.task1.Point
 import java.lang.Exception
 import java.lang.IllegalArgumentException
+import kotlin.math.PI
+import kotlin.math.abs
+import kotlin.math.roundToInt
 
 /**
  * Клетка шахматной доски. Шахматная доска квадратная и имеет 8 х 8 клеток.
@@ -27,6 +31,10 @@ data class Square(val column: Int, val row: Int) {
      */
     fun notation(): String {
         return if (Square(column, row).inside()) "${('a' - 1 + column)}$row" else ""
+    }
+
+    fun color(): String {
+        return if (column % 2 == 0 && row % 2 == 0 || column % 2 > 0 && row % 2 > 0) "black" else "white"
     }
 }
 
@@ -98,8 +106,7 @@ fun rookTrajectory(start: Square, end: Square): List<Square> {
         if (end.column - position.column != 0) {
             position = Square(end.column, position.row)
             changeTrigger = true
-        }
-        else if (end.row - position.row != 0) {
+        } else if (end.row - position.row != 0) {
             position = Square(position.column, end.row)
             changeTrigger = true
         }
@@ -132,7 +139,15 @@ fun rookTrajectory(start: Square, end: Square): List<Square> {
  * Примеры: bishopMoveNumber(Square(3, 1), Square(6, 3)) = -1; bishopMoveNumber(Square(3, 1), Square(3, 7)) = 2.
  * Слон может пройти через клетку (6, 4) к клетке (3, 7).
  */
-fun bishopMoveNumber(start: Square, end: Square): Int = TODO()
+fun bishopMoveNumber(start: Square, end: Square): Int {
+    return when {
+        start.color() != end.color() -> -1
+        start == end -> 0
+        abs(end.column - start.column) == abs(end.row - start.row) -> 1
+        else -> 2
+    }
+}
+
 
 /**
  * Сложная
@@ -152,7 +167,34 @@ fun bishopMoveNumber(start: Square, end: Square): Int = TODO()
  *          bishopTrajectory(Square(1, 3), Square(6, 8)) = listOf(Square(1, 3), Square(6, 8))
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
-fun bishopTrajectory(start: Square, end: Square): List<Square> = TODO()
+fun bishopTrajectory(start: Square, end: Square): List<Square> {
+    if (start.color() != end.color()) return emptyList()
+    val route = mutableListOf(start)
+    when {
+        start == end -> return route
+        abs(end.column - start.column) == abs(end.row - start.row) -> route.add(end)
+        else -> {
+            val linePosStart = lesson8.task1.Line(Point(start.column.toDouble(), start.row.toDouble()), PI / 4)
+            val lineNegStart = lesson8.task1.Line(Point(start.column.toDouble(), start.row.toDouble()), 3 * PI / 4)
+            val linePosEnd = lesson8.task1.Line(Point(end.column.toDouble(), end.row.toDouble()), PI / 4)
+            val lineNegEnd = lesson8.task1.Line(Point(end.column.toDouble(), end.row.toDouble()), 3 * PI / 4)
+            val crossPoint1 = Square(
+                lineNegStart.crossPoint(linePosEnd).x.roundToInt(),
+                lineNegStart.crossPoint(linePosEnd).y.roundToInt()
+            )
+            val crossPoint2 = Square(
+                linePosStart.crossPoint(lineNegEnd).x.roundToInt(),
+                linePosStart.crossPoint(lineNegEnd).y.roundToInt()
+            )
+            route.add(
+                if (crossPoint1.inside()) crossPoint1
+                else crossPoint2
+            )
+            route.add(end)
+        }
+    }
+    return route
+}
 
 /**
  * Средняя
