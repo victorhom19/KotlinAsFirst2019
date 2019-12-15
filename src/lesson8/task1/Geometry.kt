@@ -216,8 +216,8 @@ fun arctg(x: Double, eps: Double): Double {
     return if (result >= 0) result else (result + PI)
 }
 fun lineBySegment(s: Segment): Line {
-    val angle = arctg((s.end.y - s.begin.y) / (s.end.x - s.begin.x), 1e-8)
-    val angleMultiplier = floor(arctg((s.end.y - s.begin.y) / (s.end.x - s.begin.x), 1e-8) / PI)
+    val angle = arctg((s.end.y - s.begin.y) / (s.end.x - s.begin.x), 1e-5)
+    val angleMultiplier = floor(arctg((s.end.y - s.begin.y) / (s.end.x - s.begin.x), 1e-5) / PI)
     return when {
         s.end.x - s.begin.x == 0.0 -> Line(s.begin, PI / 2)
         angleMultiplier == 0.0 -> Line(s.begin, angle)

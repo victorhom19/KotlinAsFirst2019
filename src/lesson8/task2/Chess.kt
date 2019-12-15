@@ -38,7 +38,7 @@ data class Square(val column: Int, val row: Int) {
  * Если нотация некорректна, бросить IllegalArgumentException
  */
 fun square(notation: String): Square {
-    if (Square(notation[0] - 'a' + 1, notation[1] - '1' + 1).inside())
+    if (notation.length == 2 && Square(notation[0] - 'a' + 1, notation[1] - '1' + 1).inside())
         return Square(notation[0] - 'a' + 1, notation[1] - '1' + 1)
     else throw (Exception(IllegalArgumentException()))
 }
@@ -72,7 +72,7 @@ fun rookMoveNumber(start: Square, end: Square): Int {
         else if (start.column == end.column || start.row == end.row) 1
         else 2
     } else {
-        throw (Exception(IllegalAccessException()))
+        throw (Exception(IllegalArgumentException()))
     }
 }
 
